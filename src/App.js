@@ -41,7 +41,7 @@ function MyButton() {
   return (
     <Button variant="contained" color="primary" onClick={handleClick}> 
     <img src = {buttonImage} alt = "Button Icon" style={{ width: '150px', height: '100px'}}/>
-    Don't press me </Button>
+    Ice Cappucino </Button>
   );
 }
 
