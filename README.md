@@ -1,9 +1,22 @@
-<<<<<<< HEAD
-Bruh Alibi Gay
-=======
 # OneSkyMario.github.io
 
-I'm dyslexic
+#  🛠️ 🚧 Under Maintenance  🚧
 
-Thank you for your attention!
->>>>>>> 69bbd2fbbf20d206cebaac31d6579dfcc9e4a596
+A clean, mobile-first delivery service frontend inspired by Glovo and Wolt—built to showcase an intuitive UI/UX for ordering, tracking, and managing deliveries.
+
+## 🚀 Check out the website
+https://alfarabi.me
+
+## 🎯 Features  
+- **Landing & Signup** pages with modern, responsive design  
+- **Browse Restaurants** and filter by cuisine or rating  
+- **Cart & Checkout** flows with real-time order summary  
+- **Order Tracking** screen with map placeholder for live location  
+- **Profile & Order History** mockups  
+
+## 🛠 Tech Stack  
+- **Framework:** React (create-react-app)  
+- **Styling:** Tailwind CSS  
+- **Icons & Assets:** Figma designs, SVGs in `static/`  
+- **Deployment:** GitHub Pages  
+
