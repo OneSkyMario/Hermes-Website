@@ -5,7 +5,7 @@ import buttonImage from './assets/IceCappSolo.png';
 import nuMapImage from './assets/nu_map.jpg';
 import saladImage from './assets/salad_image.jpg';
 import { FaShoppingCart, FaMapMarkerAlt, FaRobot } from 'react-icons/fa';
-import HermesLogo from './assets/Hermes_Logo.png';
+//import HermesLogo from './Hermes_Logo.png';
 
 const drinks = [
   { id: 1, name: 'Ice Cappucino', image: buttonImage, price: 4.99 },
@@ -160,7 +160,7 @@ export default function App() {
   return (
     <div className="App">
       <header className="App-header" style={{ position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', padding: '2rem 0 1rem 0', background: 'none', gap: 24 }}>
-        <img src={HermesLogo} alt="Hermes Logo" style={{ height: 100, width: 100, objectFit: 'contain', borderRadius: 8}} />
+        <img src="/Hermes_Logo.png" alt="Hermes Logo" style={{ height: 100, width: 100, objectFit: 'contain', borderRadius: 8}} />
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
           <span style={{ fontFamily: 'Helvetica Neue, Helvetica', fontWeight: 100000, fontSize: '5rem', color: '#e53935', letterSpacing: 1, lineHeight: 1 }}>
             Hermes
