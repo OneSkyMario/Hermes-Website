@@ -27,7 +27,8 @@ export default function MenuPage({
   handleMapClick,
   handleCheckout,
   setMapMaximized,
-  total
+  total,
+  nuMapImage // <-- add this prop
 }) {
   // Local state for menu sub-tabs: 0=Drinks, 1=Food, 2=Orders
   const [menuTab, setMenuTab] = useState(0);
@@ -255,8 +256,8 @@ export default function MenuPage({
         </Card>
       )}
       {/* Always show the minimized/maximized map after location is confirmed */}
-      <div ref={mapRef} style={{ margin: '48px 0 32px 0' }}>
-        {mapMaximized ? (
+      {(!hasPlacedOrder && mapMaximized) && (
+        <div ref={mapRef} style={{ margin: '48px 0 32px 0' }}>
           <Card sx={{ p: 2, width: '100%', boxSizing: 'border-box', mx: 'auto', boxShadow: 3 }}>
             {nickname && (
               <Typography variant="subtitle1" color="primary" sx={{ mb: 1 }}>
@@ -267,7 +268,7 @@ export default function MenuPage({
             <Typography variant="body2" gutterBottom>Review your location and confirm your order below.</Typography>
             <div style={{ position: 'relative', width: '100%', height: '70vh', margin: '0 auto' }}>
               <img
-                src={mapRef.current ? mapRef.current.src : ''}
+                src={nuMapImage}
                 alt="Map for delivery location"
                 style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: 8, cursor: 'crosshair' }}
                 onClick={handleMapClick}
@@ -343,11 +344,15 @@ export default function MenuPage({
               Minimize Map
             </button>
           </Card>
-        ) : (
+        </div>
+      )}
+      {/* Show minimized map only if order is not placed and map is not maximized */}
+      {(!hasPlacedOrder && !mapMaximized) && (
+        <div ref={mapRef} style={{ margin: '48px 0 32px 0' }}>
           <Card sx={{ p: 1, width: '100%', boxSizing: 'border-box', mx: 'auto', boxShadow: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 60 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <img
-                src={mapRef.current ? mapRef.current.src : ''}
+                src={nuMapImage}
                 alt="Map thumbnail"
                 style={{ width: 80, height: 48, objectFit: 'cover', borderRadius: 4 }}
               />
@@ -361,8 +366,8 @@ export default function MenuPage({
               Maximize Map
             </button>
           </Card>
-        )}
-      </div>
+        </div>
+      )}
     </Box>
   );
 }

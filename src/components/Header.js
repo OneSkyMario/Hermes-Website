@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Header({ selectedTab, setSelectedTab }) {
+export default function Header({ selectedTab, setSelectedTab, handleCartOpen }) {
   return (
     <header className="header">
       <div className="logo-area">
@@ -15,7 +15,7 @@ export default function Header({ selectedTab, setSelectedTab }) {
         <a href="#contact" className={`nav-link${selectedTab === 2 ? ' active' : ''}`} onClick={() => setSelectedTab(2)}>contact us</a>
       </nav>
       <div className="header-actions">
-        <button className="icon-btn">
+        <button className="icon-btn" onClick={handleCartOpen}>
           <span role="img" aria-label="cart">🛒</span>
         </button>
       </div>

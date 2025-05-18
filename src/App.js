@@ -160,7 +160,7 @@ export default function App() {
 
   return (
     <div className="app-bg">
-      <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} handleCartOpen={handleCartOpen} />
       {/* Main Content Routing */}
       {selectedTab === 0 && (
         <>
@@ -204,6 +204,7 @@ export default function App() {
           handleCheckout={handleCheckout}
           setMapMaximized={setMapMaximized}
           total={total}
+          nuMapImage={nuMapImage}
         />
       )}
       {selectedTab === 2 && <ContactPage />}
