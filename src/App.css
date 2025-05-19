@@ -331,6 +331,66 @@
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+.app-bg::before {
+  content: '';
+  position: fixed;
+  top: calc(var(--coffee-parallax, 0px));
+  left: -100%; /* Start from outside the view */
+  width: 600px;
+  height: 600px;
+  background: url('./assets/back_ice_capp.png') no-repeat left top/contain;
+  z-index: -1;
+  pointer-events: none;
+  will-change: transform;
+  opacity: 0;
+  animation: slideInBackground 0.8s ease-out forwards;
+}
+
+/* Only show coffee spill in home and food menu */
+.app-bg.home::before,
+.app-bg.food-menu::before {
+  background: url('./assets/coffee_spill.png') no-repeat left top/contain;
+}
+
+@keyframes slideInBackground {
+  0% {
+    opacity: 0;
+    left: -100%;
+  }
+  100% {
+    opacity: 1;
+    left: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-bg::before {
+    width: 320px;
+    height: 320px;
+    background-size: contain;
+    left: -40px;
+    top: calc(-40px + var(--coffee-parallax, 0px));
+  }
+}
+
+body, html {
+  overscroll-behavior: none;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
 }
 
 /* Center main content and reduce zoomed-out feel */
@@ -491,7 +551,7 @@ button:hover, .MuiButton-root:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(90deg, #ffe3e3 0%, #fff5f5 100%);
+  background: linear-gradient(90deg, rgba(255,227,227,0.85) 0%, rgba(255,245,245,0.85) 100%);
   border-radius: 32px;
   margin: 0 auto 2.5rem auto;
   max-width: 1200px;
@@ -500,25 +560,36 @@ button:hover, .MuiButton-root:hover {
   position: relative;
   overflow: hidden;
 }
+
 .hero-content {
   flex: 1;
   padding: 2rem 1.2rem 2rem 2rem;
   z-index: 2;
+  /* More transparent background with better text contrast */
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,255,255,0.18);
 }
+
 .hero-title {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
   margin-bottom: 1.2rem;
-  text-shadow: 0 2px 12px rgba(229,57,53,0.18);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
+
 .hero-desc {
   font-size: 1.2rem;
-  color: #fff;
+  color: #ffffff;
   margin-bottom: 2.2rem;
   max-width: 480px;
-  text-shadow: 0 1px 8px rgba(229,57,53,0.10);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.2);
 }
+
 .view-menu-btn {
   background: #fff;
   color: #e53935;

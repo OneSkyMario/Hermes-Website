@@ -11,7 +11,7 @@ import MapSection from './components/MapSection';
 import MenuPage from './components/MenuPage';
 import ContactPage from './components/ContactPage';
 import OrderConfirmed from './components/OrderConfirmed';
-import TelegramQR from './components/TelegramQR'
+import TelegramQR from './components/TelegramQR';
 
 
 const drinks = [
@@ -24,40 +24,40 @@ const foods = [
   { id: 3, name: 'Fresh Salad', image: saladImage, price: 6.25 },
 ];
 
-function ItemCard({ item, onAdd }) {
-  return (
-    <Card style={{ width: '200px', margin: '10px' }}>
-      <CardContent style={{ textAlign: 'center' }}>
-        <img src={item.image} alt={item.name} style={{ width: '150px', height: '100px' }} />
-        <Typography variant="h6" gutterBottom>{item.name}</Typography>
-        <Typography variant="body1" gutterBottom>${item.price.toFixed(2)}</Typography>
-        <Button variant="outlined" size="small" onClick={() => onAdd(item)}>
-          Add to Cart
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function App() {
   const [selectedTab, setSelectedTab] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [orderPlaced, setOrderPlaced] = useState(false);
-  const [deliveryTime, setDeliveryTime] = useState(null);
   const [location, setLocation] = useState(null); // {x, y} relative to image
   const [locationConfirmed, setLocationConfirmed] = useState(false);
   const [nickname, setNickname] = useState('');
   const [hasPlacedOrder, setHasPlacedOrder] = useState(false);
-  const [showCartPreview, setShowCartPreview] = useState(false);
-  const [showLocationStep, setShowLocationStep] = useState(false);
   const mapRef = useRef(null);
   const cartPreviewTimeout = useRef(null);
   const [mapMaximized, setMapMaximized] = useState(false);
   const [orders, setOrders] = useState([]);
   const [activeOrderIndex, setActiveOrderIndex] = useState(null);
   const [hasScrolledToMap, setHasScrolledToMap] = useState(false);
+  const [menuTab, setMenuTab] = useState(0);
+
+  useEffect(() => {
+    // Parallax effect for coffee spill
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Parallax: move coffee slower than scroll (0.3x)
+      document.documentElement.style.setProperty('--coffee-parallax', `${scrollY * 0.3}px`);
+    };
+    window.addEventListener('scroll', handleScroll);
+    // Prevent extra scroll (bounce/overscroll)
+    document.body.style.overflowX = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+    document.documentElement.style.overscrollBehavior = 'none';
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   function handleAddToCart(item) {
     setCartItems(prev => {
@@ -67,9 +67,9 @@ export default function App() {
       }
       return [...prev, { ...item, quantity: 1 }];
     });
-    setShowCartPreview(true);
+  //setShowCartPreview(true);
     if (cartPreviewTimeout.current) clearTimeout(cartPreviewTimeout.current);
-    cartPreviewTimeout.current = setTimeout(() => setShowCartPreview(false), 2000);
+  //cartPreviewTimeout.current = setTimeout(() => setShowCartPreview(false), 2000);
   }
 
   function handleQuantityChange(id, delta) {
@@ -83,16 +83,16 @@ export default function App() {
   
   function handleCartOpen() {
     setCartOpen(true);
-    setShowLocationStep(false);
+  //setShowLocationStep(false);
   }
 
   function handleCartClose() {
     setCartOpen(false);
-    setShowLocationStep(false);
+//  setShowLocationStep(false);
   }
 
   function handleCheckoutClick() {
-    setShowLocationStep(true);
+  //setShowLocationStep(true);
     setCartOpen(false);
     setMapMaximized(true);
     setTimeout(() => {
@@ -148,7 +148,7 @@ export default function App() {
       }
     ]);
     setHasPlacedOrder(true);
-    setShowLocationStep(false);
+  //setShowLocationStep(false);
     setCartItems([]);
   }
 
@@ -159,7 +159,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-bg">
+    <div className={`app-bg ${selectedTab === 0 ? 'home' : selectedTab === 1 && menuTab === 0 ? 'drinks-menu' : selectedTab === 1 ? 'food-menu' : ''}`}>
       <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} handleCartOpen={handleCartOpen} />
       {/* Main Content Routing */}
       {selectedTab === 0 && (
@@ -193,7 +193,6 @@ export default function App() {
           hasPlacedOrder={hasPlacedOrder}
           handleCheckoutClick={handleCheckoutClick}
           orderPlaced={orderPlaced}
-          deliveryTime={deliveryTime}
           orders={orders}
           activeOrderIndex={activeOrderIndex}
           setActiveOrderIndex={setActiveOrderIndex}
@@ -205,6 +204,8 @@ export default function App() {
           setMapMaximized={setMapMaximized}
           total={total}
           nuMapImage={nuMapImage}
+          menuTab={menuTab}
+          setMenuTab={setMenuTab}
         />
       )}
       {selectedTab === 2 && <ContactPage />}
