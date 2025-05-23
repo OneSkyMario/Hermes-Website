@@ -1,24 +1,17 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-
 const firebaseConfig = {
 
-    apiKey: "AIzaSyArItvfNyGHezLSzLHe9SMdDoRayBTICQk",
-  
-    authDomain: "testdeliverysystem-fbi69.firebaseapp.com",
-  
-    databaseURL: "https://testdeliverysystem-fbi69-default-rtdb.europe-west1.firebasedatabase.app",
-  
-    projectId: "testdeliverysystem-fbi69",
-  
-    storageBucket: "testdeliverysystem-fbi69.firebasestorage.app",
-  
-    messagingSenderId: "779236076367",
-  
-    appId: "1:779236076367:web:2ee3ab1070a6aabef2b33a"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
   
   };
-  
+  console.log("Firebase API Key:", process.env.REACT_APP_FIREBASE_API_KEY);
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
