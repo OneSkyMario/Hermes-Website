@@ -11,8 +11,10 @@ import MapSection from './components/MapSection';
 import MenuPage from './components/MenuPage';
 import ContactPage from './components/ContactPage';
 import OrderConfirmed from './components/OrderConfirmed';
-import TelegramQR from './components/TelegramQR'
-
+import TelegramQR from './components/TelegramQR';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 const drinks = [
   { id: 1, name: 'Ice Cappucino', image: buttonImage, price: 4.99 },
@@ -24,22 +26,8 @@ const foods = [
   { id: 3, name: 'Fresh Salad', image: saladImage, price: 6.25 },
 ];
 
-function ItemCard({ item, onAdd }) {
-  return (
-    <Card style={{ width: '200px', margin: '10px' }}>
-      <CardContent style={{ textAlign: 'center' }}>
-        <img src={item.image} alt={item.name} style={{ width: '150px', height: '100px' }} />
-        <Typography variant="h6" gutterBottom>{item.name}</Typography>
-        <Typography variant="body1" gutterBottom>${item.price.toFixed(2)}</Typography>
-        <Button variant="outlined" size="small" onClick={() => onAdd(item)}>
-          Add to Cart
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication state
   const [selectedTab, setSelectedTab] = useState(0);
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
@@ -52,6 +40,24 @@ export default function App() {
   const [hasPlacedOrder, setHasPlacedOrder] = useState(false);
   const [showCartPreview, setShowCartPreview] = useState(false);
   const [showLocationStep, setShowLocationStep] = useState(false);
+  const [menuTab, setMenuTab] = useState(0);
+
+  useEffect(() => {
+    // Parallax effect for coffee spill
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      // Parallax: move coffee slower than scroll (0.3x)
+      document.documentElement.style.setProperty('--coffee-parallax', `${scrollY * 0.3}px`);
+    };
+    window.addEventListener('scroll', handleScroll);
+    // Prevent extra scroll (bounce/overscroll)
+    document.body.style.overflowX = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+    document.documentElement.style.overscrollBehavior = 'none';
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   const mapRef = useRef(null);
   const cartPreviewTimeout = useRef(null);
   const [mapMaximized, setMapMaximized] = useState(false);
@@ -76,11 +82,11 @@ export default function App() {
     setCartItems(prev => prev
       .map(ci => ci.id === id ? { ...ci, quantity: ci.quantity + delta } : ci)
       .filter(ci => ci.quantity > 0)
-  );
-}
+    );
+  }
 
   const total = cartItems.reduce((sum, ci) => sum + ci.price * ci.quantity, 0);
-  
+
   function handleCartOpen() {
     setCartOpen(true);
     setShowLocationStep(false);
@@ -135,7 +141,7 @@ export default function App() {
       alert('Please enter a nickname first!');
       return;
     }
-    
+
     // Existing state updates
     setOrders(prev => [
       ...prev,
@@ -158,58 +164,72 @@ export default function App() {
     setNickname('');
   }
 
+  function handleLogin() {
+    setIsAuthenticated(true); // Set authentication state to true
+  }
+
   return (
-    <div className="app-bg">
-      <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} handleCartOpen={handleCartOpen} />
-      {/* Main Content Routing */}
-      {selectedTab === 0 && (
-        <>
-          <HeroSection />
-          <MapSection
-            mapRef={mapRef}
-            nuMapImage={nuMapImage}
-            location={location}
-            handleMapClick={handleMapClick}
-            locationConfirmed={locationConfirmed}
-            handleConfirmLocation={handleConfirmLocation}
-          />
-        </>
+    <Router>
+      {!isAuthenticated ? (
+        <Routes>
+          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/" element={<Navigate to="/login" />} />
+        </Routes>
+      ) : (
+        <div className="app-bg">
+          <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} handleCartOpen={handleCartOpen} />
+          {/* Main Content Routing */}
+          {selectedTab === 0 && (
+            <>
+              <HeroSection />
+              <MapSection
+                mapRef={mapRef}
+                nuMapImage={nuMapImage}
+                location={location}
+                handleMapClick={handleMapClick}
+                locationConfirmed={locationConfirmed}
+                handleConfirmLocation={handleConfirmLocation}
+              />
+            </>
+          )}
+          {selectedTab === 1 && (
+            <MenuPage
+              selectedTab={selectedTab}
+              handleTabChange={handleTabChange}
+              drinks={drinks}
+              foods={foods}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              cartItems={cartItems}
+              handleAddToCart={handleAddToCart}
+              handleQuantityChange={handleQuantityChange}
+              cartOpen={cartOpen}
+              handleCartClose={handleCartClose}
+              nickname={nickname}
+              setNickname={setNickname}
+              hasPlacedOrder={hasPlacedOrder}
+              handleCheckoutClick={handleCheckoutClick}
+              orderPlaced={orderPlaced}
+              deliveryTime={deliveryTime}
+              orders={orders}
+              activeOrderIndex={activeOrderIndex}
+              setActiveOrderIndex={setActiveOrderIndex}
+              mapRef={mapRef}
+              mapMaximized={mapMaximized}
+              location={location}
+              handleMapClick={handleMapClick}
+              handleCheckout={handleCheckout}
+              setMapMaximized={setMapMaximized}
+              total={total}
+              nuMapImage={nuMapImage}
+            />
+          )}
+          {selectedTab === 2 && <ContactPage />}
+          {selectedTab === 3 && <TelegramQR />}
+          {hasPlacedOrder && <OrderConfirmed nickname={nickname} handleNewOrder={handleNewOrder} />}
+        </div>
       )}
-      {selectedTab === 1 && (
-        <MenuPage
-          selectedTab={selectedTab}
-          handleTabChange={handleTabChange}
-          drinks={drinks}
-          foods={foods}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          cartItems={cartItems}
-          handleAddToCart={handleAddToCart}
-          handleQuantityChange={handleQuantityChange}
-          cartOpen={cartOpen}
-          handleCartClose={handleCartClose}
-          nickname={nickname}
-          setNickname={setNickname}
-          hasPlacedOrder={hasPlacedOrder}
-          handleCheckoutClick={handleCheckoutClick}
-          orderPlaced={orderPlaced}
-          deliveryTime={deliveryTime}
-          orders={orders}
-          activeOrderIndex={activeOrderIndex}
-          setActiveOrderIndex={setActiveOrderIndex}
-          mapRef={mapRef}
-          mapMaximized={mapMaximized}
-          location={location}
-          handleMapClick={handleMapClick}
-          handleCheckout={handleCheckout}
-          setMapMaximized={setMapMaximized}
-          total={total}
-          nuMapImage={nuMapImage}
-        />
-      )}
-      {selectedTab === 2 && <ContactPage />}
-      {selectedTab === 3 && <TelegramQR/>}
-      {hasPlacedOrder && <OrderConfirmed nickname={nickname} handleNewOrder={handleNewOrder} />}
-    </div>
+    </Router>
   );
 }

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import {Button } from '@mui/material';
 
 export default function Header({ selectedTab, setSelectedTab, handleCartOpen }) {
   return (
@@ -6,6 +8,9 @@ export default function Header({ selectedTab, setSelectedTab, handleCartOpen }) 
       <div className="logo-area">
         <img src="/Hermes_Logo.png" alt="Hermes Logo" className="logo-img" />
         <span className="logo-text">Hermes</span>
+        {/* <Button component={Link} to="/login" variant="outlined" color="primary">
+          Login
+        </Button> */}
       </div>
       <nav className="nav-bar">
         <a href="#home" className={`nav-link${selectedTab === 0 ? ' active' : ''}`} onClick={() => setSelectedTab(0)}>home</a>
