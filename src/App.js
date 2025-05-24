@@ -15,6 +15,7 @@ import TelegramQR from './components/TelegramQR';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import SellerPage from './components/SellerPage';
 
 const drinks = [
   { id: 1, name: 'Ice Cappucino', image: buttonImage, price: 4.99 },
@@ -178,6 +179,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       ) : (
+        
         <div className={`app-bg ${selectedTab === 0 ? 'home' : selectedTab === 1 && menuTab === 0 ? 'drinks-menu' : selectedTab === 1 ? 'food-menu' : ''}`}>
           <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} handleCartOpen={handleCartOpen} />
           {/* Main Content Routing */}
@@ -233,6 +235,13 @@ export default function App() {
           {hasPlacedOrder && <OrderConfirmed nickname={nickname} handleNewOrder={handleNewOrder} />}
         </div>
       )}
+    {isAuthenticated} : {
+      <Routes>
+        <Route path="/seller-dashboard" element={<SellerPage />} />
+
+      </Routes>
+
+    }
     </Router>
   );
 }

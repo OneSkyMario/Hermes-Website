@@ -2,24 +2,52 @@ import React, { useState } from 'react';
 import { Card, Typography, Button, TextField, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../Firebase';
+import { auth, db } from '../Firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log('Login successful');
-      setError('');
-      onLogin(); // Update authentication state in the parent component
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const results = userCredential.user;
+      if (results.emailVerified == true) {
+        console.log('User is verified');
+        console.log('Login successful');
+        const userData = await fetchUser(results.uid); // Fetch user data after successful login
+        if (userData && userData.role === "student") {
+          console.log('User is a student');
+          onLogin();
+          } else if (userData.role === 'seller') {
+            navigate('/seller-dashboard'); 
+          }
+        
+        // onLogin();
+      }
+      setError('User email not verified. Please check your inbox for the verification email.');
+       // Update authentication state in the parent component
     } catch (err) {
       setError(err.message);
+      console.log('Login error:', err);
     }
   };
-
+  const fetchUser = async (userId) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'Users', userId));
+      if (userDoc.exists()) {
+        return userDoc.data();
+      } else {
+        console.log('No such user!');
+      }
+    } catch (error) {
+      console.error('Error fetching user:', error);
+    }
+  };
   return (
     <div className="login-page" style={{ display: 'flex', justifyContent: 'center', marginTop: '64px' }}>
       <Card sx={{ p: 4, width: '100%', maxWidth: 400, boxShadow: 3 }}>
