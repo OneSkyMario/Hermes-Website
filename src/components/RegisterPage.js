@@ -28,7 +28,18 @@ export default function RegisterPage({ onRegister }) {
 
   const handleRegister = async () => {
     try {
+
       // Create user with email and password
+      if (!email || !password) {
+        setError('Email and password are required.');
+        return;
+      }
+      const regex = /^nu\.edu\.kz$/;
+      if (!regex.test(email.split('@')[1])) {
+        setError('Please use a valid NU email address.');
+        return;
+      };
+      
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
   
@@ -127,15 +138,7 @@ export default function RegisterPage({ onRegister }) {
           >
             Register
           </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            color="secondary"
-            sx={{ mt: 2 }}
-            onClick={checkEmailVerification}
-          >
-            Check Email Verification
-          </Button>
+          
         </Box>
       </Card>
     </div>

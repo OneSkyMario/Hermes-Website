@@ -6,7 +6,7 @@ import { auth, db } from '../Firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
-export default function LoginPage({ onLogin }) {
+export default function LoginPage({ onLogin, setUserRole }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,21 +16,29 @@ export default function LoginPage({ onLogin }) {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const results = userCredential.user;
-      if (results.emailVerified == true) {
+      if (results.emailVerified === true) {
         console.log('User is verified');
         console.log('Login successful');
         const userData = await fetchUser(results.uid); // Fetch user data after successful login
-        if (userData && userData.role === "student") {
-          console.log('User is a student');
-          onLogin();
+        if (userData) {
+          setUserRole(userData.role.replace(/\n/g, '').trim()); // Set user role in context or state
+          if (userData.role === "student") {
+            onLogin();
+            
+            navigate('/'); // Redirect to the main page for students
+
           } else if (userData.role === 'seller') {
-            navigate('/seller-dashboard'); 
+            onLogin();
+
+            navigate('/seller-dashboard'); // Redirect to the seller dashboard
+
           }
-        
-        // onLogin();
+        }
       }
+      else {
       setError('User email not verified. Please check your inbox for the verification email.');
-       // Update authentication state in the parent component
+      } 
+      // Update authentication state in the parent component
     } catch (err) {
       setError(err.message);
       console.log('Login error:', err);

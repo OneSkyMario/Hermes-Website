@@ -42,6 +42,7 @@ export default function App() {
   const [showLocationStep, setShowLocationStep] = useState(false);
   const [menuTab, setMenuTab] = useState(0);
   const [deliveryTime, setDeliveryTime] = useState(null);
+  const [userRole, setUserRole] = useState(null); // Add this state
 
   useEffect(() => {
     // Parallax effect for coffee spill
@@ -172,15 +173,24 @@ export default function App() {
 
   return (
     <Router>
-      {!isAuthenticated ? (
+      {(!userRole)? (
         <Routes>
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        {console.log('User role:', userRole, isAuthenticated,(userRole) === 'seller')}
+
+<Route path="/login" element={<LoginPage onLogin={handleLogin} setUserRole={setUserRole} />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      ) :(userRole.trim() === 'seller')  ? (
+        
+        <Routes>
+
+          <Route path="/seller-dashboard" element={<SellerPage role={userRole} />} />
+          <Route path="*" element={<Navigate to="/seller-dashboard" />} />
         </Routes>
       ) : (
         
-        <div className={`app-bg ${selectedTab === 0 ? 'home' : selectedTab === 1 && menuTab === 0 ? 'drinks-menu' : selectedTab === 1 ? 'food-menu' : ''}`}>
+        <div className={`app-bg ${selectedTab === 0 ? 'home' : selectedTab === 1 && menuTab === 0 ? 'drinks-menu' : 'food-menu'}`}>
           <Header selectedTab={selectedTab} setSelectedTab={setSelectedTab} handleCartOpen={handleCartOpen} />
           {/* Main Content Routing */}
           {selectedTab === 0 && (
@@ -235,13 +245,7 @@ export default function App() {
           {hasPlacedOrder && <OrderConfirmed nickname={nickname} handleNewOrder={handleNewOrder} />}
         </div>
       )}
-    {isAuthenticated} : {
-      <Routes>
-        <Route path="/seller-dashboard" element={<SellerPage />} />
-
-      </Routes>
-
-    }
+      
     </Router>
   );
 }

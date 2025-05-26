@@ -3,13 +3,26 @@ import { Card, Typography, Button, TextField, Box } from '@mui/material';
 import { auth, db } from '../Firebase';
 import { collection, addDoc } from 'firebase/firestore';
 
-export default function SellerPage() {
+export default function SellerPage({role}) {
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [productDescription, setProductDescription] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
-
+  if (role !== 'seller') {
+    return (
+      <div className="unauthorized-access" style={{ display: 'flex', justifyContent: 'center', marginTop: '64px' }}>
+        <Card sx={{ p: 4, width: '100%', maxWidth: 600, boxShadow: 3 }}>
+          <Typography variant="h5" gutterBottom>
+            Unauthorized Access
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            You do not have permission to access this page. Please log in as a seller.
+          </Typography>
+        </Card>
+      </div>
+    );
+  }
   const handleCreateProduct = async () => {
     try {
       const user = auth.currentUser;
@@ -17,7 +30,17 @@ export default function SellerPage() {
         setError('You must be logged in to create a product.');
         return;
       }
+      // Validate product details
+      if (!productName || !productPrice || !productDescription) {
+        setError('All fields are required.');     
 
+        return;
+      }
+      if (isNaN(productPrice) || parseFloat(productPrice) <= 0) {
+        setError('Please enter a valid product price.');
+        
+        return;
+      }
       // Add product to Firestore
       await addDoc(collection(db, 'Products'), {
         sellerId: user.uid,
