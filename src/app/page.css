@@ -1,0 +1,388 @@
+/* Page-specific styles for the homepage */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', monospace;
+  background: white;
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 0% 50%, #000 0%, transparent 50%),
+    radial-gradient(circle at 100% 50%, #000 0%, transparent 50%);
+  -webkit-mask-image:
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0),
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px, 4px 4px;
+  -webkit-mask-position: 0 0, 2px 2px;
+  mask-image:
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0),
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px, 4px 4px;
+  mask-position: 0 0, 2px 2px;
+  opacity: 0.1; /* Reduced opacity so content is more visible */
+}
+
+header {
+  background: white;
+  padding: 20px;
+  text-align: center;
+  border-bottom: 3px solid #333;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  margin-bottom: 0;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #333;
+  -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px;
+  mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px;
+  opacity: 0.8;
+}
+
+h1 {
+  font-size: 3em;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  opacity: 1; /* Changed from 0 to 1 so it's visible initially */
+  transition: opacity 0.5s ease;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  color: #666;
+  opacity: 1; /* Changed from 0 to 1 so it's visible initially */
+  transition: opacity 0.5s ease;
+}
+
+nav {
+  background: #fff;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  border-bottom: 2px dashed #333;
+  position: sticky;
+  top: 0;
+  z-index: 9;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 10px 20px;
+  border: 2px solid #333;
+  background: white;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  opacity: 1; /* Ensure visible initially */
+}
+
+nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #333;
+  -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px;
+  mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px;
+  transition: left 0.4s;
+  z-index: -1;
+}
+
+nav a:hover {
+  color: white;
+  background: #333;
+}
+
+nav a:hover::before {
+  left: 0;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.info-section {
+  background: white;
+  border: none;
+  padding: 30px;
+  margin: 30px 0;
+  position: relative;
+  box-shadow: none;
+  opacity: 1; /* Changed from 0 to 1 so it's visible initially */
+  transform: translateY(0); /* Changed from translateY(50px) to 0 */
+  transition: all 0.5s ease;
+}
+
+.info-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 50%, #333 0%, transparent 60%);
+  -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px;
+  mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.info-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+}
+
+.info-section h2::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #333;
+  -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px;
+  mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px;
+}
+
+.info-section p {
+  font-size: 1.2em;
+  line-height: 1.8;
+}
+
+.sketch-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.sketch-item {
+  background: white;
+  border: 2px solid #333;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  opacity: 1; /* Changed from 0 to 1 so it's visible initially */
+  transform: scale(1); /* Changed from scale(0.8) to 1 */
+  transition: all 0.3s;
+}
+
+.sketch-item:hover {
+  box-shadow: 5px 5px 0 #333;
+  transform: translateY(-5px) scale(1);
+}
+
+.sketch-icon {
+  font-size: 4em;
+  margin: 20px 0;
+}
+
+.sketch-item h3 {
+  font-size: 1.5em;
+  margin: 15px 0;
+  text-transform: uppercase;
+}
+
+.sketch-item p {
+  font-size: 1em;
+  color: #666;
+  line-height: 1.6;
+}
+
+.robot-status {
+  background: white;
+  border: none;
+  padding: 30px;
+  text-align: center;
+  margin: 40px 0;
+  position: relative;
+  opacity: 1; /* Changed from 0 to 1 so it's visible initially */
+}
+
+.robot-status::before {
+  content: '🤖';
+  position: absolute;
+  font-size: 8em;
+  opacity: 0.1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.robot-icon {
+  font-size: 6em;
+  display: inline-block;
+}
+
+.status-text {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-transform: uppercase;
+}
+
+.availability {
+  font-size: 1.2em;
+  color: #666;
+}
+
+.cta-section {
+  background: white;
+  color: #333;
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  margin-top: 50px;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, white 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle 1.5px at 3px 3px, #000 100%, transparent 0);
+  -webkit-mask-size: 6px 6px;
+  mask-image: radial-gradient(circle 1.5px at 3px 3px, #000 100%, transparent 0);
+  mask-size: 6px 6px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 20px 50px;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-transform: uppercase;
+  background: white;
+  color: #333;
+  border: 3px solid white;
+  text-decoration: none;
+  margin-top: 20px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.cta-button:hover {
+  background: transparent;
+  color: white;
+  transform: scale(1.05);
+}
+
+footer {
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 50px;
+}
+
+footer p:last-child {
+  margin-top: 10px;
+}
+
+.robot-status p {
+  margin-top: 20px;
+  font-size: 1.1em;
+}
+
+.cta-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.cta-section p {
+  font-size: 1.3em;
+  margin-bottom: 20px;
+}
+
+/* Coffee Carousel */
+.coffee-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.arrow {
+  background: none;
+  border: none;
+  font-size: 2em;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.arrow:hover {
+  color: #000;
+}
+
+.coffee-item {
+  text-align: center;
+  max-width: 300px;
+}
+
+.coffee-image {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+  transform: scale(1);
+}
+
+.coffee-image.zoom-in {
+  animation: zoomInOut 0.5s ease-in-out;
+}
+
+@keyframes zoomInOut {
+  0% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}

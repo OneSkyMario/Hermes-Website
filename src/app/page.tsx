@@ -1,214 +1,301 @@
-'use client'
-import React, { useState } from 'react';
-import { ShoppingCart, ChevronDown, Star, Clock } from 'lucide-react';
-import './navbar.css';
+'use client';
 
-export default function DodoPizzaHomepage() {
-  const [activeCategory, setActiveCategory] = useState('Пиццы');
-  const [isScrolled, setIsScrolled] = useState(false);
+import React, { useEffect, useRef, useState } from 'react';
+// @ts-ignore
+import anime from 'animejs';
+import { Coffee, ChevronLeft, ChevronRight } from 'lucide-react';
 
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+import './navbar.css'
+import './page.css';
+import coffeeImage from '../assets/espresso.webp';
+import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace with cappiccuno.webp
+import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
 
-  const categories = [
-    'Пиццы', 'Комбо', 'Закуски', 'Коктейли', 'Кофе', 'Напитки', 'Десерты', 'Соусы', 'Другие товары', 'Завтрак'
-  ];
+export default function Homepage() {
+  const navbarRef = useRef<HTMLElement>(null);
+  const [currentCoffeeIndex, setCurrentCoffeeIndex] = useState(0);
+  const [isZooming, setIsZooming] = useState(false);
+  const [direction, setDirection] = useState('');
 
-  const promoCards = [
-    { title: 'Детская', subtitle: 'новинка Play Dodo комбо', bg: 'from-teal-400 to-teal-500', img: '🎮' },
-    { title: '-25%', subtitle: 'на первый заказ', bg: 'from-orange-500 to-orange-600', img: '🍕' },
-    { title: 'Новинка:', subtitle: 'Крылья с соусами', bg: 'from-red-900 to-red-800', img: '🍗' },
-    { title: 'Настройте', subtitle: 'вкус пиццы', bg: 'from-orange-50 to-orange-100', textDark: true, img: '🍕' },
-    { title: 'Пицца для ума', subtitle: '', bg: 'from-orange-500 to-orange-600', img: '📚' },
-    { title: 'Выгодное', subtitle: 'комбо', bg: 'from-orange-100 to-orange-200', textDark: true, img: '🍕' }
-  ];
-
-  const popularPizzas = [
-    { name: 'Аррива!', price: '2 150', img: '🍕' },
-    { name: 'Креветки со сладким чили', price: '2 650', img: '🍤' }
-  ];
-
-  const pizzas = [
-    { 
-      name: 'Пепперони', 
-      desc: 'Пикантная пепперони, увеличенная порция моцареллы, томатный соус',
-      price: '2 150',
-      img: '🍕'
+  const coffees = [
+    {
+      name: 'Эспрессо',
+      description: 'Крепкий и насыщенный кофе с богатым вкусом',
+      image: coffeeImage,
+      color: 'from-amber-900 to-amber-700',
+      price: '350 ₸'
     },
-    { 
-      name: 'Сырная', 
-      desc: 'Моцарелла, сыры чеддер и пармезан, фирменный соус альфредо',
-      price: '1 890',
-      img: '🧀'
+    {
+      name: 'Капучино',
+      description: 'Идеальный баланс эспрессо и молочной пенки',
+      image: cappuccinoImage,
+      color: 'from-orange-800 to-orange-600',
+      price: '450 ₸'
     },
-    { 
-      name: 'Цыпленок барбекю', 
-      desc: 'Цыпленок, бекон, соус барбекю, томатный соус, моцарелла',
-      price: '2 350',
-      img: '🍗'
+    {
+      name: 'Латте',
+      description: 'Нежный кофе с большим количеством молока',
+      image: latteImage,
+      color: 'from-yellow-800 to-yellow-600',
+      price: '500 ₸'
     },
-    { 
-      name: 'Ветчина и сыр', 
-      desc: 'Ветчина, моцарелла, фирменный соус альфредо',
-      price: '1 950',
-      img: '🥓'
+    {
+      name: 'Американо',
+      description: 'Классический кофе для ценителей простоты',
+      image: coffeeImage,
+      color: 'from-stone-800 to-stone-600',
+      price: '380 ₸'
+    },
+    {
+      name: 'Мокка',
+      description: 'Сладкое сочетание кофе и шоколада',
+      image: coffeeImage,
+      color: 'from-red-900 to-red-700',
+      price: '550 ₸'
     }
   ];
 
+  const nextCoffee = () => {
+    setDirection('next');
+    setIsZooming(true);
+    setTimeout(() => {
+      setCurrentCoffeeIndex((prev) => (prev + 1) % coffees.length);
+      setIsZooming(false);
+    }, 300);
+  };
+
+  const prevCoffee = () => {
+    setDirection('prev');
+    setIsZooming(true);
+    setTimeout(() => {
+      setCurrentCoffeeIndex((prev) => (prev - 1 + coffees.length) % coffees.length);
+      setIsZooming(false);
+    }, 300);
+  };
+
+  const goToCoffee = (index: number) => {
+    if (index === currentCoffeeIndex) return;
+    setDirection(index > currentCoffeeIndex ? 'next' : 'prev');
+    setIsZooming(true);
+    setTimeout(() => {
+      setCurrentCoffeeIndex(index);
+      setIsZooming(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let handleResize;
+
+    const handleScroll = () => {
+      const navbar = navbarRef.current;
+      if (!navbar) return;
+
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        // Scrolling up
+        navbar.style.transform = 'translateY(0)';
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    // Small delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      initAnimations();
+    }, 100);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (handleResize) window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const initAnimations = () => {
+    // Your animation code here
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white  ">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-sm">🌐 Язык</span>
-            </div>
-          
-          </div>
-        </div>
-      </nav>
-
-      {/* Header */}
-      <header className="bg-white top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-2xl">
-                🍕
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">ДОДО ПИЦЦА</h1>
-                <p className="text-xs text-gray-600">
-                  Сеть №1 в Казахстане <span className="text-orange-500">по количеству пиццерий</span>
-                </p>
-              </div>
-            </div>
-
-            {/* Delivery Info */}
-            <div>
-              <p className="text-sm text-gray-600">Доставка пиццы <span className="font-bold">Алматы</span></p>
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
-                <span className="font-bold">31 мин</span>
-                <span>•</span>
-                <span className="font-bold">4.8</span>
-                <Star size={14} fill="#fbbf24" stroke="#fbbf24" />
-              </div>
-            </div>
-
-            {/* Cart & Login */}
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <ShoppingCart size={24} />
-              </div>
-              <button className="bg-orange-500 text-white px-6 py-2 rounded-full font-bold hover:bg-orange-600">
-                Корзина
-              </button>
-              <button className="text-gray-700 font-medium">Войти</button>
-            </div>
-          </div>
-        </div>
+    <div>
+      <header>
+        <h1>OTTO</h1>
+        <p className="subtitle">Transportation Services</p>
       </header>
 
-      {/* Categories Menu */}
-      <div 
-        id="navbar" 
-        className={`sticky top-[0px] z-40 ${isScrolled ? 'scrolled' : ''}`}
-      >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center gap-6 overflow-x-auto py-4">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`whitespace-nowrap px-4 py-2 rounded-full font-medium transition-colors ${
-                  activeCategory === cat
-                    ? 'bg-orange-100 text-orange-600'
-                    : 'hover:bg-gray-100 text-gray-700'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-                                                                                                                                                                                                                                                                                                                                
-            
+      <nav id='navbar' ref={navbarRef}>
+        <div className="dropdown">
+          <a href="#Drinks">Drinks</a>
+          <div className="dropdown-content">
+            <a href="#">Coffee</a>
+            <a href="#">Tea</a>
+            <a href="#">Juice</a>
           </div>
         </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Promo Cards */}
-        <div className="grid grid-cols-6 gap-4 mb-12">
-          {promoCards.map((card, idx) => (
-            <div
-              key={idx}
-              className={`bg-gradient-to-br ${card.bg} rounded-2xl p-6 cursor-pointer hover:scale-105 transition-transform ${
-                idx < 3 ? 'col-span-2' : 'col-span-2'
-              } ${card.textDark ? 'text-gray-900' : 'text-white'} flex flex-col justify-between min-h-[200px]`}
-            >
-              <div>
-                <h3 className="text-2xl font-bold mb-1">{card.title}</h3>
-                <p className="text-lg">{card.subtitle}</p>
-              </div>
-              <div className="text-6xl text-right opacity-50">{card.img}</div>
-            </div>
-          ))}
+        <div className="dropdown">
+          <a href="#Food">Food</a>
+          <div className="dropdown-content">
+            <a href="#">Pizza</a>
+          </div>
         </div>
+        <a href="#contact">Contact</a>
+      </nav>
 
-        {/* Popular Orders */}
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6">Часто заказывают</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {popularPizzas.map((pizza, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl p-6 hover:shadow-lg transition-shadow cursor-pointer"
-              >
-                <div className="w-32 h-32 mx-auto mb-4 text-6xl flex items-center justify-center">
-                  {pizza.img}
-                </div>
-                <h3 className="font-bold text-lg mb-2">{pizza.name}</h3>
-                <p className="text-gray-600 text-sm mb-4">от {pizza.price} тг.</p>
-              </div>
-            ))}
+      <main>
+        <section id="recommendation" className="info-section">
+          <div className="section-header">
+            <h2>Today's Recommendation</h2>
+          </div>
+          <div className="halftone-line"></div>
+          <div className="sketch-container">
+            <div className="sketch-item">
+              <h3>Caramel Macchiato</h3>
+              <p>Espresso with steamed milk and caramel drizzle.</p>
+            </div>
+            <div className="sketch-item">
+              <h3>Margherita Pizza</h3>
+              <p>Classic pizza with fresh tomatoes, mozzarella, and basil.</p>
+            </div>
           </div>
         </section>
 
-        {/* Pizzas Grid */}
-        <section>
-          <h2 className="text-3xl font-bold mb-6">Пиццы</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {pizzas.map((pizza, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
-              >
-                <div className="aspect-square bg-gradient-to-br from-orange-100 to-yellow-50 flex items-center justify-center text-8xl">
-                  {pizza.img}
-                </div>
-                <div className="p-6">
-                  <h3 className="font-bold text-xl mb-2">{pizza.name}</h3>
-                  <p className="text-gray-500 text-sm mb-4 line-clamp-2">{pizza.desc}</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xl font-bold">от {pizza.price} ₸</p>
-                    <button className="bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-medium hover:bg-orange-200">
-                      Выбрать
-                    </button>
+        <section id="menu" className="info-section">
+          <div className="section-header">
+            <h2>Coffee</h2>
+          </div>
+          <div className="halftone-line"></div>
+          
+          {/* Coffee Carousel */}
+          <div className="w-full max-w-4xl mx-auto px-4">
+            <div className="relative">
+              {/* Главная карточка */}
+              <div className={`relative bg-gradient-to-br ${coffees[currentCoffeeIndex].color} rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`}>
+                {/* Декоративные элементы */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full translate-y-24 -translate-x-24"></div>
+
+                <div className="relative z-10 p-8 md:p-12">
+                  <div className="flex flex-col md:flex-row items-center gap-8">
+                    {/* Изображение кофе */}
+                    <div className="flex-shrink-0">
+                      <div className={`transform transition-all duration-500 ${isZooming ? direction === 'next' ? 'rotate-12 scale-75' : '-rotate-12 scale-75' : 'rotate-0 scale-100'}`}>
+                        <img 
+                          src={typeof coffees[currentCoffeeIndex].image === 'string' ? coffees[currentCoffeeIndex].image : coffees[currentCoffeeIndex].image.src} 
+                          alt={coffees[currentCoffeeIndex].name}
+                          className="w-48 h-48 object-contain drop-shadow-2xl"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Информация */}
+                    <div className="flex-1 text-white text-center md:text-left">
+                      <div className="flex items-center gap-2 mb-2 justify-center md:justify-start">
+                        <Coffee className="w-5 h-5" />
+                        <span className="text-sm font-medium uppercase tracking-wider opacity-90">
+                          Напиток дня
+                        </span>
+                      </div>
+                      <h2 className={`text-4xl md:text-5xl font-bold mb-4 transition-all duration-500 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
+                        {coffees[currentCoffeeIndex].name}
+                      </h2>
+                      <p className={`text-lg md:text-xl mb-6 opacity-90 transition-all duration-500 delay-100 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
+                        {coffees[currentCoffeeIndex].description}
+                      </p>
+                      <div className={`flex items-center gap-4 justify-center md:justify-start transition-all duration-500 delay-200 ${isZooming ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}`}>
+                        <span className="text-3xl font-bold">{coffees[currentCoffeeIndex].price}</span>
+                        <button className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95">
+                          Заказать
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
+
+              {/* Стрелки навигации */}
+              <button
+                onClick={prevCoffee}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
+              >
+                <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 text-stone-900 group-hover:-translate-x-1 transition-transform" />
+              </button>
+              <button
+                onClick={nextCoffee}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
+              >
+                <ChevronRight className="w-6 h-6 md:w-8 md:h-8 text-stone-900 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+
+            {/* Индикаторы */}
+            <div className="flex justify-center gap-3 mt-8">
+              {coffees.map((coffee, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToCoffee(index)}
+                  className={`transition-all duration-300 rounded-full ${
+                    index === currentCoffeeIndex
+                      ? 'bg-white w-12 h-3'
+                      : 'bg-white/30 w-3 h-3 hover:bg-white/50'
+                  }`}
+                  aria-label={`Перейти к ${coffee.name}`}
+                />
+              ))}
+            </div>
+
+            {/* Миниатюры */}
+            <div className="hidden md:flex justify-center gap-4 mt-8">
+              {coffees.map((coffee, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToCoffee(index)}
+                  className={`transition-all duration-300 ${
+                    index === currentCoffeeIndex
+                      ? 'scale-100 opacity-100'
+                      : 'scale-75 opacity-40 hover:opacity-70 hover:scale-90'
+                  }`}
+                >
+                  <div className={`bg-gradient-to-br ${coffee.color} p-4 rounded-2xl shadow-lg`}>
+                    <img 
+                      src={typeof coffee.image === 'string' ? coffee.image : coffee.image.src} 
+                      alt={coffee.name}
+                      className="w-12 h-12 object-contain"
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
+
+        <section id="robot" className="robot-status">
+          <div className="robot-icon">🤖</div>
+          <div className="status-text">Robot Status</div>
+          <div className="availability">⚠️ No Available Robot</div>
+          <p>
+            It will be available in 2hrs
+          </p>
+        </section>
+
+        <section className="cta-section">
+          <h2>Ready to Order?</h2>
+          <div className="halftone-line-gradient" style={{margin: '30px auto', maxWidth: '600px'}}></div>
+          <p>
+            Go now! We're waiting to serve you.
+          </p>
+          <a href="#contact" className="cta-button">Place Order Now</a>
+        </section>
       </main>
+
+      <footer>
+        <p>&copy; 2026 OTTO Transportation Services | All Rights Reserved</p>
+        <p>Automated Delivery • Robot Assistance • 24/7 Service</p>
+      </footer>
     </div>
   );
 }
