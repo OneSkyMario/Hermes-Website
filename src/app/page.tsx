@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-// @ts-ignore
-import anime from 'animejs';
 import { Coffee, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import './navbar.css'
@@ -10,9 +8,11 @@ import './page.css';
 import coffeeImage from '../assets/espresso.webp';
 import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace with cappiccuno.webp
 import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
+import robotImage from '../assets/image.png'; // Add your robot PNG here
 
 export default function Homepage() {
   const navbarRef = useRef<HTMLElement>(null);
+  const robotRef = useRef<HTMLImageElement>(null);
   const [currentCoffeeIndex, setCurrentCoffeeIndex] = useState(0);
   const [isZooming, setIsZooming] = useState(false);
   const [direction, setDirection] = useState('');
@@ -108,7 +108,7 @@ export default function Homepage() {
 
     // Small delay to ensure DOM is fully rendered
     setTimeout(() => {
-      initAnimations();
+      // initAnimations();
     }, 100);
 
     return () => {
@@ -116,10 +116,6 @@ export default function Homepage() {
       if (handleResize) window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  const initAnimations = () => {
-    // Your animation code here
-  };
 
   return (
     <div>
@@ -132,7 +128,7 @@ export default function Homepage() {
         <div className="dropdown">
           <a href="#Drinks">Drinks</a>
           <div className="dropdown-content">
-            <a href="#">Coffee</a>
+            <a href="#Coffee">Coffee</a>
             <a href="#">Tea</a>
             <a href="#">Juice</a>
           </div>
@@ -166,7 +162,7 @@ export default function Homepage() {
 
         <section id="menu" className="info-section">
           <div className="section-header">
-            <h2>Coffee</h2>
+            <h2 id="Coffee">Coffee</h2>
           </div>
           <div className="halftone-line"></div>
           
@@ -174,10 +170,10 @@ export default function Homepage() {
           <div className="w-full max-w-4xl mx-auto px-4">
             <div className="relative">
               {/* Главная карточка */}
-              <div className={`relative bg-gradient-to-br ${coffees[currentCoffeeIndex].color} rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`}>
+              <div className={`relative halftone-carousel bg-black rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`}>
                 {/* Декоративные элементы */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full translate-y-24 -translate-x-24"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
 
                 <div className="relative z-10 p-8 md:p-12">
                   <div className="flex flex-col md:flex-row items-center gap-8">
@@ -260,7 +256,7 @@ export default function Homepage() {
                       : 'scale-75 opacity-40 hover:opacity-70 hover:scale-90'
                   }`}
                 >
-                  <div className={`bg-gradient-to-br ${coffee.color} p-4 rounded-2xl shadow-lg`}>
+                  <div className={`bg-gradient-to-br bg-gray-800 p-4 rounded-2xl shadow-lg`}>
                     <img 
                       src={typeof coffee.image === 'string' ? coffee.image : coffee.image.src} 
                       alt={coffee.name}
@@ -273,13 +269,33 @@ export default function Homepage() {
           </div>
         </section>
 
-        <section id="robot" className="robot-status">
-          <div className="robot-icon">🤖</div>
-          <div className="status-text">Robot Status</div>
-          <div className="availability">⚠️ No Available Robot</div>
-          <p>
-            It will be available in 2hrs
-          </p>
+        <section id="robot" className="" style={{ position: 'relative', overflow: 'visible' }}>
+          {/* Floating Robot Image */}
+          <img 
+            ref={robotRef}
+            src={robotImage.src}
+            alt="Floating Robot"
+            className="floating"
+            style={{
+              position: 'absolute',
+              width: '200px',
+              height: 'auto',
+              top: '-100px',
+              right: '10%',
+              filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3))',
+              cursor: 'pointer',
+              zIndex: 10,
+              transition: 'transform 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.1) rotate(5deg)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
+            }}
+          />
+          
+        
         </section>
 
         <section className="cta-section">
