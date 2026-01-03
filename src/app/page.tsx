@@ -16,7 +16,8 @@ export default function Homepage() {
   const [currentCoffeeIndex, setCurrentCoffeeIndex] = useState(0);
   const [isZooming, setIsZooming] = useState(false);
   const [direction, setDirection] = useState('');
-
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollContainerRef = useRef(null);
   const coffees = [
     {
       name: 'Эспрессо',
@@ -82,6 +83,7 @@ export default function Homepage() {
       setIsZooming(false);
     }, 300);
   };
+  
 
   useEffect(() => {
     let lastScrollY = window.scrollY;
@@ -100,7 +102,7 @@ export default function Homepage() {
         // Scrolling up
         navbar.style.transform = 'translateY(0)';
       }
-
+      
       lastScrollY = currentScrollY;
     };
 
@@ -115,6 +117,7 @@ export default function Homepage() {
       window.removeEventListener('scroll', handleScroll);
       if (handleResize) window.removeEventListener('resize', handleResize);
     };
+    
   }, []);
 
   return (
@@ -169,106 +172,76 @@ export default function Homepage() {
           </div>
           <div className="halftone-line"></div>
           
-          {/* Coffee Carousel */}
-          <div className="w-full max-w-4xl mx-auto px-2 sm:px-4">
-            <div className="relative">
-              {/* Главная карточка */}
-              <div className={`relative halftone-carousel rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`} style={{border: '2px solid #6b6b6b'}}>
-                {/* Декоративные элементы */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
-
-                <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12">
-                  <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8">
-                    {/* Изображение кофе */}
-                    <div className="flex-shrink-0">
-                      <div className={`transform transition-all duration-500 ${isZooming ? direction === 'next' ? 'rotate-12 scale-75' : '-rotate-12 scale-75' : 'rotate-0 scale-100'}`}>
-                        <img 
-                          src={typeof coffees[currentCoffeeIndex].image === 'string' ? coffees[currentCoffeeIndex].image : coffees[currentCoffeeIndex].image.src} 
-                          alt={coffees[currentCoffeeIndex].name}
-                          className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl"
+          {/* Scrollable Container */}
+        <div
+          ref={scrollContainerRef}
+          className="overflow-x-scroll snap-x snap-mandatory scrollbar-hide  hover:shadow-[5px_5px_0_#6b6b6b] hover:-translate-y-1 hover:scale-[1.01] transition-all #6b6b6b;
+}"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+            WebkitOverflowScrolling: 'touch'
+          }}
+        >
+          <div className="flex">
+            {coffees.map((coffee, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-full snap-start snap-always px-4"
+              >
+                <div
+                  className=""
+                  style={{ border: '3px solid rgba(255, 255, 255, 0.3)' }}
+                >
+                  {/* Decorative Elements */}
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10 p-6 md:p-12">
+                    <div className="flex flex-col md:flex-row items-center gap-8">
+                      {/* Coffee Image */}
+                      <div className="flex-shrink-0">
+                        <img
+                          src={coffee.image.src}
+                          alt={coffee.name}
+                          className="w-48 h-48 md:w-64 md:h-64 object-cover rounded-2xl drop-shadow-2xl ring-4 ring-white/30"
                         />
                       </div>
-                    </div>
 
-                    {/* Информация */}
-                    <div className="flex-1 text-white text-center md:text-left">
-                      <div className="flex items-center gap-2 mb-2 justify-center md:justify-start">
-                        <Coffee className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="text-xs sm:text-sm font-medium uppercase tracking-wider opacity-90">
-                          Напиток дня
-                        </span>
-                      </div>
-                      <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 transition-all duration-500 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
-                        {coffees[currentCoffeeIndex].name}
-                      </h2>
-                      <p className={`text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 opacity-90 transition-all duration-500 delay-100 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
-                        {coffees[currentCoffeeIndex].description}
-                      </p>
-                      <div className={`flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center md:justify-start transition-all duration-500 delay-200 ${isZooming ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}`}>
-                        <span className="text-2xl sm:text-3xl font-bold">{coffees[currentCoffeeIndex].price}</span>
-                        <button className="bg-white text-stone-900 px-6 sm:px-8 py-2 sm:py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto text-sm sm:text-base">
-                          Заказать
-                        </button>
+                      {/* Coffee Info */}
+                      <div className="flex-1 text-white text-center md:text-left">
+                        <div className="flex items-center gap-2 mb-3 justify-center md:justify-start">
+                          <Coffee className="w-5 h-5" />
+                          <span className="text-sm font-medium uppercase tracking-wider opacity-90">
+                            Напиток дня
+                          </span>
+                        </div>
+
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+                          {coffee.name}
+                        </h2>
+
+                        <p className="text-lg md:text-xl mb-6 opacity-90">
+                          {coffee.description}
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+                          <span className="text-3xl md:text-4xl font-bold">
+                            {coffee.price}
+                          </span>
+                          <button className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
+                            Заказать
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-
-              {/* Стрелки навигации */}
-              <button
-                onClick={prevCoffee}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 md:-translate-x-6 bg-white/90 backdrop-blur-sm p-2 sm:p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
-              >
-                <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 text-stone-900 group-hover:-translate-x-1 transition-transform" />
-              </button>
-              <button
-                onClick={nextCoffee}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 md:translate-x-6 bg-white/90 backdrop-blur-sm p-2 sm:p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
-              >
-                <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 text-stone-900 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-
-            {/* Индикаторы */}
-            <div className="flex justify-center gap-2 sm:gap-3 mt-4 sm:mt-6 md:mt-8">
-              {coffees.map((coffee, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToCoffee(index)}
-                  className={`transition-all duration-300 rounded-full ${
-                    index === currentCoffeeIndex
-                      ? 'bg-white w-8 sm:w-10 md:w-12 h-2 sm:h-2.5 md:h-3'
-                      : 'bg-white/30 w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 hover:bg-white/50'
-                  }`}
-                  aria-label={`Перейти к ${coffee.name}`}
-                />
-              ))}
-            </div>
-
-            {/* Миниатюры */}
-            <div className="hidden md:flex justify-center gap-4 mt-8">
-              {coffees.map((coffee, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToCoffee(index)}
-                  className={`transition-all duration-300 ${
-                    index === currentCoffeeIndex
-                      ? 'scale-100 opacity-100'
-                      : 'scale-75 opacity-40 hover:opacity-70 hover:scale-90'
-                  }`}
-                >
-                  <div className={`bg-gradient-to-br bg-gray-800 p-4 rounded-2xl shadow-lg`}>
-                    <img 
-                      src={typeof coffee.image === 'string' ? coffee.image : coffee.image.src} 
-                      alt={coffee.name}
-                      className="w-12 h-12 object-contain"
-                    />
-                  </div>
-                </button>
-              ))}
-            </div>
+            ))}
+          </div>
+      
           </div>
         </section>
 

@@ -373,6 +373,28 @@ footer p:last-child {
   align-items: center;
   justify-content: center;
   gap: 20px;
+  overflow-x: scroll; /* Enables horizontal scrolling */
+  scroll-behavior: smooth; /* Smooth scrolling animation */
+  -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS */
+  scroll-snap-type: x mandatory; /* Ensures items snap into place */ 
+}
+
+.coffee-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+
+.coffee-item {
+  flex: 0 0 100%; /* Makes each item take up the full container width */
+  scroll-snap-align: start; /* Aligns the start of the item to the snap position */
+  background-color: #eee;
+  border: 1px solid #ddd;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  box-sizing: border-box; /* Ensures padding/border are included in width calculation */
 }
 
 .arrow {
@@ -401,6 +423,7 @@ footer p:last-child {
   transform: scale(1); /* Changed from scale(0.8) to 1 */
   transition: all 0.3s;
 }
+
 
 .coffee-image {
   width: 200px;
