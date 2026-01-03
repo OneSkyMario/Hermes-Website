@@ -86,7 +86,6 @@
 /* Navbar links */
 #navbar a {
   display: inline-block;
-  padding: 10px 15px;
   text-decoration: none;
   color: #5a5a5a;
   transition: background-color 0.3s;
@@ -107,7 +106,6 @@ header::after {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%;
   height: 4px;
   background: 
     radial-gradient(circle at 10% 50%, #ff6b00 0%, transparent 40%),
@@ -246,7 +244,6 @@ section h2::after {
 .dropdown-content a {
   color: #5a5a5a;
   display: block;
-  padding: 10px 15px;
 }
 
 .dropdown-content a:hover {
@@ -258,25 +255,19 @@ section h2::after {
   #navbar {
     flex-direction: column;
     align-items: stretch;
-    padding: 10px;
   }
 
   #navbar > div,
   #navbar > a {
-    width: 100%;
     text-align: center;
-    margin: 5px 0;
   }
 
   .dropdown {
-    width: 100%;
   }
 
   .dropdown-content {
     position: static;
     display: none;
-    width: 100%;
-    margin-top: 5px;
   }
 
   .dropdown:hover .dropdown-content,
@@ -285,18 +276,14 @@ section h2::after {
   }
 
   .dropdown-content a {
-    padding: 12px 15px;
     text-align: center;
   }
 }
 
 @media (max-width: 480px) {
-  #navbar {
-    padding: 8px;
-  }
+  
 
   #navbar a {
-    padding: 8px 12px;
     font-size: 0.9em;
   }
 }

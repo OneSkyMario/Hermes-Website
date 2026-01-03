@@ -173,7 +173,7 @@ export default function Homepage() {
           <div className="w-full max-w-4xl mx-auto px-2 sm:px-4">
             <div className="relative">
               {/* Главная карточка */}
-              <div className={`relative halftone-carousel rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`} style={{ backgroundColor: '#4a4a4a' }}>
+              <div className={`relative halftone-carousel rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`} style={{border: '2px solid #6b6b6b'}}>
                 {/* Декоративные элементы */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
