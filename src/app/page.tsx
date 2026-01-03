@@ -167,23 +167,23 @@ export default function Homepage() {
           <div className="halftone-line"></div>
           
           {/* Coffee Carousel */}
-          <div className="w-full max-w-4xl mx-auto px-4">
+          <div className="w-full max-w-4xl mx-auto px-2 sm:px-4">
             <div className="relative">
               {/* Главная карточка */}
-              <div className={`relative halftone-carousel bg-black rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`}>
+              <div className={`relative halftone-carousel rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transition-all duration-500 ${isZooming ? 'scale-95 opacity-70' : 'scale-100 opacity-100'}`} style={{ backgroundColor: '#4a4a4a' }}>
                 {/* Декоративные элементы */}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
                 <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
 
-                <div className="relative z-10 p-8 md:p-12">
-                  <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12">
+                  <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6 md:gap-8">
                     {/* Изображение кофе */}
                     <div className="flex-shrink-0">
                       <div className={`transform transition-all duration-500 ${isZooming ? direction === 'next' ? 'rotate-12 scale-75' : '-rotate-12 scale-75' : 'rotate-0 scale-100'}`}>
                         <img 
                           src={typeof coffees[currentCoffeeIndex].image === 'string' ? coffees[currentCoffeeIndex].image : coffees[currentCoffeeIndex].image.src} 
                           alt={coffees[currentCoffeeIndex].name}
-                          className="w-48 h-48 object-contain drop-shadow-2xl"
+                          className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl"
                         />
                       </div>
                     </div>
@@ -191,20 +191,20 @@ export default function Homepage() {
                     {/* Информация */}
                     <div className="flex-1 text-white text-center md:text-left">
                       <div className="flex items-center gap-2 mb-2 justify-center md:justify-start">
-                        <Coffee className="w-5 h-5" />
-                        <span className="text-sm font-medium uppercase tracking-wider opacity-90">
+                        <Coffee className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="text-xs sm:text-sm font-medium uppercase tracking-wider opacity-90">
                           Напиток дня
                         </span>
                       </div>
-                      <h2 className={`text-4xl md:text-5xl font-bold mb-4 transition-all duration-500 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
+                      <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 transition-all duration-500 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
                         {coffees[currentCoffeeIndex].name}
                       </h2>
-                      <p className={`text-lg md:text-xl mb-6 opacity-90 transition-all duration-500 delay-100 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
+                      <p className={`text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 opacity-90 transition-all duration-500 delay-100 ${isZooming ? 'translate-x-8 opacity-0' : 'translate-x-0 opacity-100'}`}>
                         {coffees[currentCoffeeIndex].description}
                       </p>
-                      <div className={`flex items-center gap-4 justify-center md:justify-start transition-all duration-500 delay-200 ${isZooming ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}`}>
-                        <span className="text-3xl font-bold">{coffees[currentCoffeeIndex].price}</span>
-                        <button className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95">
+                      <div className={`flex flex-col sm:flex-row items-center gap-3 sm:gap-4 justify-center md:justify-start transition-all duration-500 delay-200 ${isZooming ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}`}>
+                        <span className="text-2xl sm:text-3xl font-bold">{coffees[currentCoffeeIndex].price}</span>
+                        <button className="bg-white text-stone-900 px-6 sm:px-8 py-2 sm:py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto text-sm sm:text-base">
                           Заказать
                         </button>
                       </div>
@@ -216,28 +216,28 @@ export default function Homepage() {
               {/* Стрелки навигации */}
               <button
                 onClick={prevCoffee}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 md:-translate-x-6 bg-white/90 backdrop-blur-sm p-2 sm:p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
               >
-                <ChevronLeft className="w-6 h-6 md:w-8 md:h-8 text-stone-900 group-hover:-translate-x-1 transition-transform" />
+                <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 text-stone-900 group-hover:-translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={nextCoffee}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 md:translate-x-6 bg-white/90 backdrop-blur-sm p-2 sm:p-3 md:p-4 rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all active:scale-95 group z-10"
               >
-                <ChevronRight className="w-6 h-6 md:w-8 md:h-8 text-stone-900 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 md:w-8 md:h-8 text-stone-900 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
 
             {/* Индикаторы */}
-            <div className="flex justify-center gap-3 mt-8">
+            <div className="flex justify-center gap-2 sm:gap-3 mt-4 sm:mt-6 md:mt-8">
               {coffees.map((coffee, index) => (
                 <button
                   key={index}
                   onClick={() => goToCoffee(index)}
                   className={`transition-all duration-300 rounded-full ${
                     index === currentCoffeeIndex
-                      ? 'bg-white w-12 h-3'
-                      : 'bg-white/30 w-3 h-3 hover:bg-white/50'
+                      ? 'bg-white w-8 sm:w-10 md:w-12 h-2 sm:h-2.5 md:h-3'
+                      : 'bg-white/30 w-2 sm:w-2.5 md:w-3 h-2 sm:h-2.5 md:h-3 hover:bg-white/50'
                   }`}
                   aria-label={`Перейти к ${coffee.name}`}
                 />
@@ -278,10 +278,10 @@ export default function Homepage() {
             className="floating"
             style={{
               position: 'absolute',
-              width: '200px',
+              width: 'clamp(100px, 15vw, 200px)',
               height: 'auto',
-              top: '-100px',
-              right: '10%',
+              top: 'clamp(-50px, -8vw, -100px)',
+              right: 'clamp(5%, 10vw, 10%)',
               filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3))',
               cursor: 'pointer',
               zIndex: 10,

@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f5f5;
+  --foreground: #5a5a5a;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #4a4a4a;
+    --foreground: #e5e5e5;
   }
 }
 
@@ -24,4 +24,10 @@ body {
   color: var(--foreground);
   font-family: Helvetica, sans-serif;
   padding-top: 60px; /* Space for fixed navbar */
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-top: 80px; /* More space for mobile navbar */
+  }
 }
