@@ -10,6 +10,7 @@ import coffeeImage from '../assets/espresso.webp';
 import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace with cappiccuno.webp
 import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
 import robotImage from '../assets/image.png'; // Add your robot PNG here
+import { coffees } from '@/lib/coffees';
 
 export default function Homepage() {
   const navbarRef = useRef<HTMLElement>(null);
@@ -21,43 +22,7 @@ export default function Homepage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigation = usePathname(); 
   const router = useRouter();
-  const coffees = [
-    {
-      name: 'Эспрессо',
-      description: 'Крепкий и насыщенный кофе с богатым вкусом',
-      image: coffeeImage,
-      color: 'from-amber-900 to-amber-700',
-      price: '0 ₸'
-    },
-    {
-      name: 'Капучино',
-      description: 'Идеальный баланс эспрессо и молочной пенки',
-      image: cappuccinoImage,
-      color: 'from-orange-800 to-orange-600',
-      price: '450 ₸'
-    },
-    {
-      name: 'Латте',
-      description: 'Нежный кофе с большим количеством молока',
-      image: latteImage,
-      color: 'from-yellow-800 to-yellow-600',
-      price: '500 ₸'
-    },
-    {
-      name: 'Американо',
-      description: 'Классический кофе для ценителей простоты',
-      image: coffeeImage,
-      color: 'from-stone-800 to-stone-600',
-      price: '380 ₸'
-    },
-    {
-      name: 'Мокка',
-      description: 'Сладкое сочетание кофе и шоколада',
-      image: coffeeImage,
-      color: 'from-red-900 to-red-700',
-      price: '550 ₸'
-    }
-  ];
+  
 
   // Separate useEffect for navbar hide/show on page scroll
   // Separate useEffect for navbar hide/show on page scroll
@@ -145,9 +110,9 @@ export default function Homepage() {
   };
   
 
-  const handleCoffeeClick = (coffeeName: string) => {
+  const handleCoffeeClick = (productID: number) => {
     // Navigate to coffee detail page
-    router.push(`/coffee/${coffeeName.toLowerCase()}`);
+    router.push(`/coffee/${productID}`);
   };
 
   return (
@@ -218,7 +183,7 @@ export default function Homepage() {
               <div
                 key={index}
                 className="flex-shrink-0 w-full snap-start snap-always px-4"
-                onClick={() => handleCoffeeClick(coffee.name)}
+                onClick={() => handleCoffeeClick(coffee.productID)}
               >
                 <div
                   className=""
@@ -233,7 +198,7 @@ export default function Homepage() {
                       {/* Coffee Image */}
                       <div className="flex-shrink-0">
                         <img
-                          src={coffee.image.src}
+                          src={coffee.imagestr}
                           alt={coffee.name}
                           className="w-48 h-48 md:w-64 md:h-64 object-cover rounded-2xl drop-shadow-2xl ring-4 ring-white/30"
                         />
