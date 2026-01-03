@@ -8,6 +8,7 @@ body {
   position: relative;
   overflow-x: hidden;
   min-height: 100vh;
+  color: #4a4a4a;
 }
 
 body::before {
@@ -426,6 +427,7 @@ footer p:last-child {
 
   .subtitle {
     font-size: 1em;
+    top:0;
   }
 
   header {

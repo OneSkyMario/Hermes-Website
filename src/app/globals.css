@@ -23,11 +23,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Helvetica, sans-serif;
-  padding-top: 60px; /* Space for fixed navbar */
+  padding-top: 0; /* No padding needed as navbar is sticky, not fixed */
 }
 
 @media (max-width: 768px) {
   body {
-    padding-top: 80px; /* More space for mobile navbar */
+    padding-top: 0; /* No padding needed as navbar is sticky, not fixed */
   }
 }
