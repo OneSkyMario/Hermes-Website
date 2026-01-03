@@ -24,7 +24,7 @@ export default function Homepage() {
       description: 'Крепкий и насыщенный кофе с богатым вкусом',
       image: coffeeImage,
       color: 'from-amber-900 to-amber-700',
-      price: '350 ₸'
+      price: '0 ₸'
     },
     {
       name: 'Капучино',
