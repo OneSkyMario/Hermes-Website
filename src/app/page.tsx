@@ -56,69 +56,33 @@ export default function Homepage() {
     }
   ];
 
-  const nextCoffee = () => {
-    setDirection('next');
-    setIsZooming(true);
-    setTimeout(() => {
-      setCurrentCoffeeIndex((prev) => (prev + 1) % coffees.length);
-      setIsZooming(false);
-    }, 300);
-  };
-
-  const prevCoffee = () => {
-    setDirection('prev');
-    setIsZooming(true);
-    setTimeout(() => {
-      setCurrentCoffeeIndex((prev) => (prev - 1 + coffees.length) % coffees.length);
-      setIsZooming(false);
-    }, 300);
-  };
-
-  const goToCoffee = (index: number) => {
-    if (index === currentCoffeeIndex) return;
-    setDirection(index > currentCoffeeIndex ? 'next' : 'prev');
-    setIsZooming(true);
-    setTimeout(() => {
-      setCurrentCoffeeIndex(index);
-      setIsZooming(false);
-    }, 300);
-  };
   
-
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let handleResize;
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
     const handleScroll = () => {
-      const navbar = navbarRef.current;
-      if (!navbar) return;
-
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down
-        navbar.style.transform = 'translateY(-100%)';
-      } else {
-        // Scrolling up
-        navbar.style.transform = 'translateY(0)';
-      }
-      
-      lastScrollY = currentScrollY;
+      const scrollLeft = container.scrollLeft;
+      const itemWidth = container.offsetWidth;
+      const index = Math.round(scrollLeft / itemWidth);
+      setCurrentIndex(index);
     };
 
-    window.addEventListener('scroll', handleScroll);
-
-    // Small delay to ensure DOM is fully rendered
-    setTimeout(() => {
-      // initAnimations();
-    }, 100);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (handleResize) window.removeEventListener('resize', handleResize);
-    };
-    
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
   }, []);
+  
+  const scrollToIndex = (index: number) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    
+    const itemWidth = container.offsetWidth;
+    container.scrollTo({
+      left: itemWidth * index,
+      behavior: 'smooth'
+    });
+  };
+  
 
   return (
     <div>
@@ -175,8 +139,8 @@ export default function Homepage() {
           {/* Scrollable Container */}
         <div
           ref={scrollContainerRef}
-          className="overflow-x-scroll snap-x snap-mandatory scrollbar-hide  hover:shadow-[5px_5px_0_#6b6b6b] hover:-translate-y-1 hover:scale-[1.01] transition-all #6b6b6b;
-}"
+          className="overflow-x-scroll overflow-y-hidden  snap-x snap-mandatory scrollbar-hide hover:shadow-[5px_5px_0_#6b6b6b] hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 rounded-3xl"
+        
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
@@ -191,7 +155,6 @@ export default function Homepage() {
               >
                 <div
                   className=""
-                  style={{ border: '3px solid rgba(255, 255, 255, 0.3)' }}
                 >
                   {/* Decorative Elements */}
                   <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
@@ -243,7 +206,24 @@ export default function Homepage() {
           </div>
       
           </div>
+          {/* Dots Indicator */}
+        <div className="flex justify-center gap-2 mt-6 position: relative">
+          {coffees.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => scrollToIndex(index)}
+              className={`transition-all duration-300 rounded-full ${
+                index === currentIndex
+                  ? 'w-8 h-3 bg-stone-700'
+                  : 'w-3 h-3 bg-stone-400 hover:bg-stone-500'
+              }`}
+              aria-label={`Go to coffee ${index + 1}`}
+            />
+          ))}
+        </div>
         </section>
+
+
 
         <section id="robot" className="" style={{ position: 'relative', overflow: 'visible' }}>
           {/* Floating Robot Image */}

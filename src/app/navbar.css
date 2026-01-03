@@ -31,7 +31,6 @@
   mask-composite: add;
   opacity: 1;
 }
-
 /* Navbar with halftone effect */
 #navbar {
   position: sticky;
@@ -42,6 +41,7 @@
   display: flex;
   justify-content: flex-start;
   z-index: 1000;
+  padding: 20px 0;
 }
 
 #navbar::before {
@@ -50,7 +50,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 10%;
   background: radial-gradient(circle at 0% 50%, #ff6b00 0%, transparent 50%),
               radial-gradient(circle at 100% 50%, #ff6b00 0%, transparent 50%);
   -webkit-mask-image: 
@@ -83,141 +83,22 @@
   opacity: 0.25;
 }
 
-/* Navbar links */
+/* Navbar links - BIGGER FONT */
 #navbar a {
   display: inline-block;
   text-decoration: none;
   color: #5a5a5a;
-  transition: background-color 0.3s;
+  font-size: 1.4em;
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
 }
 
 #navbar a:hover {
   background-color: rgba(255, 107, 0, 0.1);
-}
-
-/* Header with halftone accent */
-header {
-  position: relative;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  background: 
-    radial-gradient(circle at 10% 50%, #ff6b00 0%, transparent 40%),
-    radial-gradient(circle at 90% 50%, #ff6b00 0%, transparent 40%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  -webkit-mask-size: 4px 4px;
-  mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  mask-size: 4px 4px;
-  opacity: 0.8;
-}
-
-/* Promo cards with subtle halftone texture */
-.bg-gradient-to-br {
-  position: relative;
-  overflow: hidden;
-}
-
-.bg-gradient-to-br::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 20% 50%, currentColor 0%, transparent 60%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  -webkit-mask-size: 4px 4px;
-  mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  mask-size: 4px 4px;
-  opacity: 0.08;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-/* Pizza cards with halftone hover effect */
-.hover\:shadow-xl:hover {
-  position: relative;
-}
-
-.hover\:shadow-xl:hover::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  background: 
-    radial-gradient(circle at 50% 50%, #ff6b00 0%, transparent 70%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1.2px at 2.5px 2.5px, #000 100%, transparent 0);
-  -webkit-mask-size: 5px 5px;
-  mask-image: 
-    radial-gradient(circle 1.2px at 2.5px 2.5px, #000 100%, transparent 0);
-  mask-size: 5px 5px;
-  opacity: 0.2;
-  border-radius: inherit;
-  pointer-events: none;
-  animation: halftone-pulse 2s ease-in-out infinite;
-  z-index: -1;
-}
-
-@keyframes halftone-pulse {
-  0%, 100% { 
-    opacity: 0.15;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.25;
-    transform: scale(1.02);
-  }
-}
-
-/* Ensure content layers properly */
-nav, header, main {
-  position: relative;
-  z-index: 1;
-}
-
-/* Smooth transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in-out;
-}
-
-button, .cursor-pointer {
-  transition: all 0.2s ease;
-}
-
-/* Optional: Halftone overlay on specific sections */
-section h2 {
-  position: relative;
-  display: inline-block;
-}
-
-section h2::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: 
-    linear-gradient(90deg, #ff6b00 0%, transparent 100%);
-  -webkit-mask-image: 
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0);
-  -webkit-mask-size: 3px 3px;
-  mask-image: 
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0);
-  mask-size: 3px 3px;
-  opacity: 0.5;
+  color: #ff6b00;
+  transform: translateY(-2px);
 }
 
 /* Dropdown menu styles */
@@ -234,7 +115,8 @@ section h2::after {
   z-index: 1;
   top: 100%;
   left: 0;
-  border: 1px solid #6b6b6b;
+  border: 2px solid #6b6b6b;
+  min-width: 200px;
 }
 
 .dropdown:hover .dropdown-content {
@@ -244,10 +126,14 @@ section h2::after {
 .dropdown-content a {
   color: #5a5a5a;
   display: block;
+  font-size: 1.2em;
+  padding: 12px 20px;
+  text-align: left;
 }
 
 .dropdown-content a:hover {
   background-color: #e5e5e5;
+  color: #ff6b00;
 }
 
 /* Mobile Responsive Styles */
@@ -255,14 +141,17 @@ section h2::after {
   #navbar {
     flex-direction: column;
     align-items: stretch;
+    padding: 15px 0;
+  }
+
+  #navbar a {
+    font-size: 1.2em;
+    padding: 10px 20px;
   }
 
   #navbar > div,
   #navbar > a {
     text-align: center;
-  }
-
-  .dropdown {
   }
 
   .dropdown-content {
@@ -277,13 +166,19 @@ section h2::after {
 
   .dropdown-content a {
     text-align: center;
+    font-size: 1.1em;
+    padding: 10px 15px;
   }
 }
 
 @media (max-width: 480px) {
-  
-
   #navbar a {
-    font-size: 0.9em;
+    font-size: 1.1em;
+    padding: 8px 16px;
+  }
+
+  .dropdown-content a {
+    font-size: 1em;
+    padding: 8px 12px;
   }
 }
