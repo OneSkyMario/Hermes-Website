@@ -56,7 +56,34 @@ export default function Homepage() {
     }
   ];
 
-  
+  // Separate useEffect for navbar hide/show on page scroll
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    let handleResize;
+  const handleScroll = () => {
+    const navbar = navbarRef.current;
+    if (!navbar) return;
+    const currentScrollY = window.scrollY;
+    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+      // Scrolling down
+      navbar.style.transform = 'translateY(-100%)';
+    } else {
+      // Scrolling up
+      navbar.style.transform = 'translateY(0)';
+    }
+
+    lastScrollY = currentScrollY;
+  };
+  window.addEventListener('scroll', handleScroll);
+    // Small delay to ensure DOM is fully rendered
+    setTimeout(() => {
+      // initAnimations();
+    }, 100);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (handleResize) window.removeEventListener('resize', handleResize);
+    };
+  });
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -70,6 +97,7 @@ export default function Homepage() {
     addEventListener('scroll', handleScroll);
     return () => removeEventListener('scroll', handleScroll);
   }, []);
+  
   
   const scrollToIndex = (index: number) => {
     const container = scrollContainerRef.current;

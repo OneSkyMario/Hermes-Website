@@ -39,7 +39,9 @@
   background: #f5f5f5;
   transition: all 0.3s ease, transform 0.3s ease;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   z-index: 1000;
   padding: 20px 0;
 }
