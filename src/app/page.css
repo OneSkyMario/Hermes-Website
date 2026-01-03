@@ -86,7 +86,6 @@ nav {
   justify-content: center;
   gap: 30px;
   border-bottom: 2px dashed #6b6b6b;
-  position: sticky;
   top: 0;
   z-index: 9;
   flex-wrap: wrap;
@@ -484,6 +483,7 @@ footer p:last-child {
     gap: 10px;
     flex-direction: column;
     align-items: center;
+    position: relative;
   }
 
   nav a {
@@ -492,6 +492,8 @@ footer p:last-child {
     width: 100%;
     max-width: 200px;
     text-align: center;
+    position: relative;
+
   }
 
   main {

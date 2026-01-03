@@ -2,9 +2,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Coffee, ChevronLeft, ChevronRight } from 'lucide-react';
-
+import { usePathname } from 'next/navigation'; // Optional: for active link highlighting
 import './navbar.css'
 import './page.css';
+import { useRouter } from 'next/navigation'; // For Next.js 13+ (App Router)
 import coffeeImage from '../assets/espresso.webp';
 import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace with cappiccuno.webp
 import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
@@ -17,7 +18,9 @@ export default function Homepage() {
   const [isZooming, setIsZooming] = useState(false);
   const [direction, setDirection] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const navigation = usePathname(); 
+  const router = useRouter();
   const coffees = [
     {
       name: 'Эспрессо',
@@ -57,33 +60,64 @@ export default function Homepage() {
   ];
 
   // Separate useEffect for navbar hide/show on page scroll
+  // Separate useEffect for navbar hide/show on page scroll
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    let handleResize;
+  let lastScrollY = window.scrollY;
+  
   const handleScroll = () => {
     const navbar = navbarRef.current;
     if (!navbar) return;
+    
+    const isMobile = window.innerWidth <= 768;
     const currentScrollY = window.scrollY;
-    if (currentScrollY > lastScrollY && currentScrollY > 100) {
-      // Scrolling down
-      navbar.style.transform = 'translateY(-100%)';
-    } else {
-      // Scrolling up
+    
+    if (isMobile) {
+      // On mobile, navbar is not sticky - stays below header
+      navbar.style.position = 'relative';
       navbar.style.transform = 'translateY(0)';
+    } else {
+      // On desktop, navbar is sticky and hides/shows
+      navbar.style.position = 'sticky';
+      
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        // Scrolling down
+        navbar.style.transform = 'translateY(-100%)';
+      } else {
+        // Scrolling up
+        navbar.style.transform = 'translateY(0)';
+      }
     }
-
+    
     lastScrollY = currentScrollY;
   };
+  
+  const handleResize = () => {
+    const navbar = navbarRef.current;
+    if (!navbar) return;
+    
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      navbar.style.position = 'relative';
+      navbar.style.transform = 'translateY(0)';
+    } else {
+      navbar.style.position = 'sticky';
+    }
+  };
+
   window.addEventListener('scroll', handleScroll);
-    // Small delay to ensure DOM is fully rendered
-    setTimeout(() => {
-      // initAnimations();
-    }, 100);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (handleResize) window.removeEventListener('resize', handleResize);
-    };
-  });
+  window.addEventListener('resize', handleResize);
+  
+  // Initial check
+  handleResize();
+  
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('resize', handleResize);
+  };
+}, []);
+
+
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -100,16 +134,21 @@ export default function Homepage() {
   
   
   const scrollToIndex = (index: number) => {
-    const container = scrollContainerRef.current;
+    const container = scrollContainerRef['current'];
     if (!container) return;
     
     const itemWidth = container['offsetWidth'];
-    scrollTo({
+    container.scrollTo({
       left: itemWidth * index,
       behavior: 'smooth'
     });
   };
   
+
+  const handleCoffeeClick = (coffeeName: string) => {
+    // Navigate to coffee detail page
+    router.push(`/coffee/${coffeeName.toLowerCase()}`);
+  };
 
   return (
     <div>
@@ -179,6 +218,7 @@ export default function Homepage() {
               <div
                 key={index}
                 className="flex-shrink-0 w-full snap-start snap-always px-4"
+                onClick={() => handleCoffeeClick(coffee.name)}
               >
                 <div
                   className=""
@@ -189,7 +229,6 @@ export default function Homepage() {
                   
                   {/* Content */}
                   <div className="relative z-10 p-6 md:p-12">
-                  navigate('/dashboard');
                     <div className="flex flex-col md:flex-row items-center gap-8">
                       {/* Coffee Image */}
                       <div className="flex-shrink-0">

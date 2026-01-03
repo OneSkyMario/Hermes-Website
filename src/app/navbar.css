@@ -33,7 +33,6 @@
 }
 /* Navbar with halftone effect */
 #navbar {
-  position: sticky;
   top: 0px;
   width: 100%;
   background: #f5f5f5;
@@ -177,6 +176,7 @@
   #navbar a {
     font-size: 1.1em;
     padding: 8px 16px;
+    position: relative;
   }
 
   .dropdown-content a {
