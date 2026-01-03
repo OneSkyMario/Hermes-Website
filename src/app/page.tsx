@@ -62,22 +62,21 @@ export default function Homepage() {
     if (!container) return;
 
     const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const itemWidth = container.offsetWidth;
+      const scrollLeft = container['scrollLeft'];
+      const itemWidth = container['offsetWidth'];
       const index = Math.round(scrollLeft / itemWidth);
       setCurrentIndex(index);
     };
-
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
+    addEventListener('scroll', handleScroll);
+    return () => removeEventListener('scroll', handleScroll);
   }, []);
   
   const scrollToIndex = (index: number) => {
     const container = scrollContainerRef.current;
     if (!container) return;
     
-    const itemWidth = container.offsetWidth;
-    container.scrollTo({
+    const itemWidth = container['offsetWidth'];
+    scrollTo({
       left: itemWidth * index,
       behavior: 'smooth'
     });
@@ -162,6 +161,7 @@ export default function Homepage() {
                   
                   {/* Content */}
                   <div className="relative z-10 p-6 md:p-12">
+                  navigate('/dashboard');
                     <div className="flex flex-col md:flex-row items-center gap-8">
                       {/* Coffee Image */}
                       <div className="flex-shrink-0">
