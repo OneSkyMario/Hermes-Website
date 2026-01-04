@@ -690,10 +690,13 @@ footer p:last-child {
   opacity: 0.6;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 375px) {
   .halftone-line,
   .halftone-line-gradient {
     margin: 15px 0;
     height: 1.5px;
+  }
+  body{
+        font-size: 1.5rem;
   }
 }

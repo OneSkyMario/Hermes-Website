@@ -14,8 +14,8 @@ export default function CoffeeDetail() {
   
   const selectedCoffee = coffees.find(c => c.productID === coffeeId);
   const [activeView, setActiveView] = useState('inside');
-  const [selectedStore, setSelectedStore] = useState(null);
-
+  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  
   const stores = [
     { id: 1, name: 'Lyros Coffee Central', address: 'ул. Абая, 150', distance: '2.3 км', rating: 4.8 },
     { id: 2, name: 'Lyros Coffee Park', address: 'пр. Сатпаева, 90', distance: '3.1 км', rating: 4.9 },
