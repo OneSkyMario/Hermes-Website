@@ -14,6 +14,14 @@ export default function CoffeeDetail() {
   
   const selectedCoffee = coffees.find(c => c.productID === coffeeId);
   const [activeView, setActiveView] = useState('inside');
+  const [selectedStore, setSelectedStore] = useState(null);
+
+  const stores = [
+    { id: 1, name: 'Lyros Coffee Central', address: 'ул. Абая, 150', distance: '2.3 км', rating: 4.8 },
+    { id: 2, name: 'Lyros Coffee Park', address: 'пр. Сатпаева, 90', distance: '3.1 км', rating: 4.9 },
+    { id: 3, name: 'Lyros Coffee Mall', address: 'ТРЦ Dostyk Plaza', distance: '4.5 км', rating: 4.7 },
+    { id: 4, name: 'Lyros Coffee Station', address: 'ул. Желтоксан, 55', distance: '1.8 км', rating: 4.6 }
+  ];
 
   if (!selectedCoffee) {
     return (
@@ -46,7 +54,7 @@ export default function CoffeeDetail() {
             </button>
             <div className="logo">
               <Coffee style={{ width: '32px', height: '32px' }} />
-              <span>Lyros Coffee</span>
+              <span>Otto</span>
             </div>
           </div>
 
@@ -120,6 +128,36 @@ export default function CoffeeDetail() {
                 </div>
                 <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>{selectedCoffee.intensity}</div>
               </div>
+            </div>
+
+            {/* Store Selection */}
+            <div className="store-section">
+              <h3 className="store-section-title">Выберите магазин</h3>
+              <div className="store-list">
+                {stores.map((store) => (
+                  <button
+                    key={store.id}
+                    className={`store-card ${selectedStore?.id === store.id ? 'selected' : ''}`}
+                    onClick={() => setSelectedStore(store)}
+                  >
+                    <div className="store-card-header">
+                      <div className="store-name">{store.name}</div>
+                      <div className="store-rating">
+                        <Star className="star-icon" fill="#fbbf24" stroke="#fbbf24" />
+                        <span>{store.rating}</span>
+                      </div>
+                    </div>
+                    <div className="store-address">{store.address}</div>
+                    <div className="store-distance">{store.distance}</div>
+                  </button>
+                ))}
+              </div>
+              {selectedStore && (
+                <div className="selected-store-info">
+                  <div className="selected-store-label">Выбранный магазин:</div>
+                  <div className="selected-store-name">{selectedStore.name}</div>
+                </div>
+              )}
             </div>
           </div>
 
