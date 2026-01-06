@@ -1,252 +1,62 @@
-/* True Halftone Gradient - Dense to Sparse Dots */
-.min-h-screen {
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* Main Halftone Background Layer */
-.min-h-screen::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-  background: 
-    radial-gradient(circle at 0% 50%, #000 0%, transparent 45%),
-    radial-gradient(circle at 100% 50%, #000 0%, transparent 45%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0),
-    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0);
-  -webkit-mask-size: 4px 4px, 4px 4px;
-  -webkit-mask-position: 0 0, 2px 2px;
-  -webkit-mask-composite: source-over;
-  mask-image: 
-    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0),
-    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0);
-  mask-size: 4px 4px, 4px 4px;
-  mask-position: 0 0, 2px 2px;
-  mask-composite: add;
-  opacity: 1;
-}
-
-/* Navbar with halftone effect */
+/* 1. Navbar: Clean Row Alignment */
 #navbar {
   position: fixed;
   top: 0;
   width: 100%;
   background: white;
-  transition: all 0.3s ease, transform 0.3s ease;
   display: flex;
-  justify-content: flex-start;
+  flex-direction: row; /* Horizontal layout */
+  justify-content: center; 
+  align-items: center;
   z-index: 1000;
+  overflow: visible; 
+  gap: 30px; /* Space between Drinks, Food, Contact */
+  min-height: 60px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-#navbar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 0% 50%, #ff6b00 0%, transparent 50%),
-              radial-gradient(circle at 100% 50%, #ff6b00 0%, transparent 50%);
-  -webkit-mask-image: 
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0),
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0);
-  -webkit-mask-size: 3px 3px, 3px 3px;
-  -webkit-mask-position: 0 0, 1.5px 1.5px;
-  mask-image: 
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0),
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0);
-  mask-size: 3px 3px, 3px 3px;
-  mask-position: 0 0, 1.5px 1.5px;
-  opacity: 0.15;
-  pointer-events: none;
-  z-index: 0;
+/* Remove any ::before pseudo-elements to get rid of the dots */
+#navbar::before, .dropdown-content::before {
+  content: none !important;
 }
 
-#navbar > div {
-  position: relative;
-  z-index: 1;
-}
-
-#navbar.scrolled {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-#navbar.scrolled::before {
-  opacity: 0.25;
-}
-
-/* Navbar links */
-#navbar a {
-  display: inline-block;
-  padding: 10px 15px;
-  text-decoration: none;
-  color: #333;
-  transition: background-color 0.3s;
-}
-
-#navbar a:hover {
-  background-color: rgba(255, 107, 0, 0.1);
-}
-
-/* Header with halftone accent */
-header {
-  position: relative;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-
-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: 
-    radial-gradient(circle at 10% 50%, #ff6b00 0%, transparent 40%),
-    radial-gradient(circle at 90% 50%, #ff6b00 0%, transparent 40%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  -webkit-mask-size: 4px 4px;
-  mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  mask-size: 4px 4px;
-  opacity: 0.8;
-}
-
-/* Promo cards with subtle halftone texture */
-.bg-gradient-to-br {
-  position: relative;
-  overflow: hidden;
-}
-
-.bg-gradient-to-br::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle at 20% 50%, currentColor 0%, transparent 60%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  -webkit-mask-size: 4px 4px;
-  mask-image: 
-    radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
-  mask-size: 4px 4px;
-  opacity: 0.08;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-}
-
-/* Pizza cards with halftone hover effect */
-.hover\:shadow-xl:hover {
-  position: relative;
-}
-
-.hover\:shadow-xl:hover::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  background: 
-    radial-gradient(circle at 50% 50%, #ff6b00 0%, transparent 70%);
-  -webkit-mask-image: 
-    radial-gradient(circle 1.2px at 2.5px 2.5px, #000 100%, transparent 0);
-  -webkit-mask-size: 5px 5px;
-  mask-image: 
-    radial-gradient(circle 1.2px at 2.5px 2.5px, #000 100%, transparent 0);
-  mask-size: 5px 5px;
-  opacity: 0.2;
-  border-radius: inherit;
-  pointer-events: none;
-  animation: halftone-pulse 2s ease-in-out infinite;
-  z-index: -1;
-}
-
-@keyframes halftone-pulse {
-  0%, 100% { 
-    opacity: 0.15;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.25;
-    transform: scale(1.02);
-  }
-}
-
-/* Ensure content layers properly */
-nav, header, main {
-  position: relative;
-  z-index: 1;
-}
-
-/* Smooth transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in-out;
-}
-
-button, .cursor-pointer {
-  transition: all 0.2s ease;
-}
-
-/* Optional: Halftone overlay on specific sections */
-section h2 {
-  position: relative;
-  display: inline-block;
-}
-
-section h2::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: 
-    linear-gradient(90deg, #ff6b00 0%, transparent 100%);
-  -webkit-mask-image: 
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0);
-  -webkit-mask-size: 3px 3px;
-  mask-image: 
-    radial-gradient(circle 0.8px at 1.5px 1.5px, #000 100%, transparent 0);
-  mask-size: 3px 3px;
-  opacity: 0.5;
-}
-
-/* Dropdown menu styles */
+/* 2. Dropdown Container */
 .dropdown {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
 }
 
+/* 3. Dropdown Content: Items in a ROW */
 .dropdown-content {
-  display: none;
+  display: flex; 
+  flex-direction: row; /* This puts Coffee, Tea, Juice in a line */
+  gap: 15px;
+  padding: 10px 20px;
   position: absolute;
-  background-color: #f9f9f9;
-  box-shadow: rgba(0,0,0,0.2);
-  z-index: 1;
   top: 100%;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: white;
+  border: 1px solid #ddd;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .dropdown:hover .dropdown-content {
-  display: block;
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
-.dropdown-content a {
-  color: black;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #f1f1f1;
+.dropdown-item {
+  white-space: nowrap;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 5px 10px;
+  border: 1px solid #eee; /* Makes them look like small cards */
+  border-radius: 4px;
 }
