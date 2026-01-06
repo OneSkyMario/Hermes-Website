@@ -2,26 +2,59 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft } from 'lucide-react';
+import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown, Zap, Tag, ThumbsUp } from 'lucide-react';
 import { coffees } from '@/lib/coffees';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './page.css';
+
+ const STORES = [
+  { 
+    id: 's1', name: 'Mitte Roastery', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop',
+    rating: 4.9, price: 4.50, speed: '8m', tag: 'Fastest', type: 'Zap', address: '123 Coffee St, Berlin', distance: '0.5 km'
+  },
+  { 
+    id: 's3', name: 'Organic Bean Co.', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=800&auto=format&fit=crop',
+    rating: 5.0, price: 5.20, speed: '12m', tag: 'Recommended', type: 'ThumbsUp', address: '456 Brew Ave, Berlin', distance: '1.2 km'
+  },
+  { 
+    id: 's2', name: 'The Dot Lab', image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop',
+    rating: 4.7, price: 3.80, speed: '14m', tag: 'Cheapest', type: 'Tag', address: '789 Espresso Rd, Berlin', distance: '2.0 km'
+  },
+  { 
+    id: 's4', name: 'West End Grinds', image: 'https://images.unsplash.com/photo-1453614512568-c4024d13c247?q=80&w=800&auto=format&fit=crop',
+    rating: 4.5, price: 4.20, speed: '18m', tag: 'Partner', type: 'Coffee', address: '321 Latte Ln, Berlin', distance: '2.5 km'
+  },
+];
+const getIcon = (type:String) => {
+  switch(type) {
+    case 'Zap': return Zap;
+    case 'Tag': return Tag;
+    case 'ThumbsUp': return ThumbsUp;
+    default: return Coffee;
+  }
+};
 
 export default function CoffeeDetail() {
   const router = useRouter();
   const params = useParams();
   const coffeeId = Number(params.id);
-  
+  const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
   const selectedCoffee = coffees.find(c => c.productID === coffeeId);
   const [activeView, setActiveView] = useState('inside');
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   
-  const stores = [
-    { id: 1, name: 'Lyros Coffee Central', address: 'ул. Абая, 150', distance: '2.3 км', rating: 4.8 },
-    { id: 2, name: 'Lyros Coffee Park', address: 'пр. Сатпаева, 90', distance: '3.1 км', rating: 4.9 },
-    { id: 3, name: 'Lyros Coffee Mall', address: 'ТРЦ Dostyk Plaza', distance: '4.5 км', rating: 4.7 },
-    { id: 4, name: 'Lyros Coffee Station', address: 'ул. Желтоксан, 55', distance: '1.8 км', rating: 4.6 }
-  ];
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [activeStore, setActiveStore] = useState(STORES[0]);  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event:any) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsStoreDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (!selectedCoffee) {
     return (
@@ -129,37 +162,114 @@ export default function CoffeeDetail() {
                 <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>{selectedCoffee.intensity}</div>
               </div>
             </div>
-
-            {/* Store Selection */}
-            <div className="store-section">
-              <h3 className="store-section-title">Выберите магазин</h3>
-              <div className="store-list">
-                {stores.map((store) => (
-                  <button
-                    key={store.id}
-                    className={`store-card ${selectedStore?.id === store.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedStore(store)}
-                  >
-                    <div className="store-card-header">
-                      <div className="store-name">{store.name}</div>
-                      <div className="store-rating">
-                        <Star className="star-icon" fill="#fbbf24" stroke="#fbbf24" />
-                        <span>{store.rating}</span>
-                      </div>
-                    </div>
-                    <div className="store-address">{store.address}</div>
-                    <div className="store-distance">{store.distance}</div>
-                  </button>
-                ))}
-              </div>
-              {selectedStore && (
-                <div className="selected-store-info">
-                  <div className="selected-store-label">Выбранный магазин:</div>
-                  <div className="selected-store-name">{selectedStore.name}</div>
-                </div>
-              )}
-            </div>
+       {/* Store Selection */}
+{/* Store Selection */}
+<div className="store-section">
+  <h3 className="store-section-title">Выберите магазин</h3>
+  
+  <div className="store-dropdown-container" ref={dropdownRef}>
+    <button 
+      onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
+      className="store-dropdown-btn"
+    >
+      <div className="store-dropdown-btn-content">
+        <div className="store-dropdown-icon">
+          {React.createElement(getIcon(activeStore.type), { size: 20 })}
+        </div>
+        <div className="store-dropdown-details">
+          <div className="store-dropdown-tag">
+            Source: {activeStore.tag}
           </div>
+          <div className="store-dropdown-name">
+            {activeStore.name}
+          </div>
+          <div className="store-dropdown-address">
+            {activeStore.address}
+          </div>
+        </div>
+      </div>
+      <div className="store-dropdown-right">
+        <div className="store-dropdown-stats">
+          <div className="store-dropdown-speed">
+            <Clock size={12} />
+            {activeStore.speed}
+          </div>
+          <div className="store-dropdown-rating">
+            <Star size={12} fill="#fbbf24" stroke="#fbbf24" />
+            {activeStore.rating}
+          </div>
+        </div>
+        <div className={`store-dropdown-chevron ${isStoreDropdownOpen ? 'open' : ''}`}>
+          <ChevronDown size={20} />
+        </div>
+      </div>
+    </button>
+
+    {/* Dropdown Menu */}
+    {isStoreDropdownOpen && (
+      <div className="store-dropdown-menu">
+        <div className="store-dropdown-menu-header">
+          <span className="store-dropdown-menu-title">Доступные магазины</span>
+        </div>
+        <div className="store-dropdown-list">
+          {STORES.map((store) => {
+            const Icon = getIcon(store.type);
+            const isActive = activeStore.id === store.id;
+            
+            return (
+              <button 
+                key={store.id}
+                onClick={() => {
+                  setActiveStore(store);
+                  setIsStoreDropdownOpen(false);
+                }}
+                className={`store-dropdown-item ${isActive ? 'active' : ''}`}
+              >
+                <div className="store-dropdown-item-left">
+                  <div className="store-dropdown-item-icon">
+                    <Icon size={20} />
+                  </div>
+                  <div className="store-dropdown-item-info">
+                    <div className="store-dropdown-item-tag">
+                      {store.tag}
+                    </div>
+                    <div className="store-dropdown-item-name">
+                      {store.name}
+                    </div>
+                    <div className="store-dropdown-item-address">
+                      {store.address}
+                    </div>
+                  </div>
+                </div>
+                <div className="store-dropdown-item-right">
+                  <div className="store-dropdown-item-rating">
+                    <Star size={12} fill="#fbbf24" stroke="#fbbf24" />
+                    {store.rating}
+                  </div>
+                  <div className="store-dropdown-item-speed">
+                    <Clock size={11} />
+                    {store.speed}
+                  </div>
+                  <div className="store-dropdown-item-distance">
+                    {store.distance}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+
+  {selectedStore && (
+    <div className="selected-store-info">
+      <div className="selected-store-label">Выбранный магазин:</div>
+      <div className="selected-store-name">{selectedStore.name}</div>
+    </div>
+  )}
+</div>
+            </div>
 
           {/* Right Column */}
           <div className="view-section">
