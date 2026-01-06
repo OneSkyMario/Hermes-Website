@@ -61,40 +61,123 @@
 }
 
 /* Header */
+/* Layout Container */
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 3px solid #6b6b6b;
+  justify-content: space-between; /* Pushes content to far left and far right */
+  padding: 0.75rem 2rem;
   background: #f5f5f5;
-  position: relative;
+  border-bottom: 3px solid #6b6b6b;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
 }
 
+/* Left Section: Logo + Title */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-circle {
+  width: 40px;
+  height: 40px;
+  background: #6b6b6b;
+  border-radius: 50%; /* Makes it a circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  border: 2px solid #4a4a4a;
+}
+
+.logo-text {
+  font-size: 1.25rem; /* Smaller font size as requested */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 800;
+  margin: 0;
+  color: #4a4a4a;
+}
+
+/* Center Section: Navigation Links */
+.nav-center {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #5a5a5a;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-link:hover, .nav-link.active {
+  border-color: #6b6b6b;
+  background: white;
+}
+
+/* Right Section: User Profile (Matches Screenshot) */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #6b6b6b; /* Matches your gray theme */
+  border: 2px solid #4a4a4a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #4a4a4a;
+  margin: 0;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: #7a7a7a;
+  margin: 0;
+}
+
+/* Add the Halftone Dot Border under the header */
 .header::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -6px;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 4px;
   background: #6b6b6b;
   -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
   -webkit-mask-size: 4px 4px;
   mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
   mask-size: 4px 4px;
-  opacity: 0.6;
-}
-
-.header > * {
-  position: relative;
-  z-index: 1;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  opacity: 0.4;
 }
 
 .back-btn {

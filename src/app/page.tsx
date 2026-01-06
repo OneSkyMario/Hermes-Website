@@ -118,30 +118,46 @@ export default function Homepage() {
 
   return (
     <div>
-      <header>
-        <h1>OTTO</h1>
-      </header>
-
-      <nav id='navbar' ref={navbarRef}>
+      <header className="header" ref={navbarRef}>
+      <div className="header-left">
+      <div className="logo-circle">
+          <Coffee className="w-6 h-6" /> </div>
+    <h1 className="logo-text">Otto</h1>
+      </div>
+      
+      <nav className="nav-center">
         <div className="dropdown">
-          <a href="#Drinks">Drinks</a>
+          <a href="#" className="nav-link active">Drinks</a>
           <div className="dropdown-content">
-            <a href="#Coffee">Coffee</a>
-            <a href="#">Tea</a>
-            <a href="#">Juice</a>
+            <div className="dropdown">
+              <a href="#Coffee">Coffee</a>
+              </div>
+            <div className="dropdown">
+              <a href="#">Tea</a>
+            </div>
+            <div className="dropdown">
+              <a href="#">Juice</a>
+            </div>
           </div>
-        </div>
+          </div>
         <div className="dropdown">
-          <a href="#Food">Food</a>
+          <a href="#" className="nav-link active">Food</a>
           <div className="dropdown-content">
             <a href="#">Pizza</a>
           </div>
         </div>
-        <div className="dropdown">
-        <a href="#contact">Contact</a>
-         
+        </nav>
+      <div className="user-info">
+        <div className="user-avatar">
+          <span>GA</span> </div>
+        <div className="user-details">
+          <p className="user-name">Grayson Adler</p>
+          <p className="user-role">Account manager</p>
         </div>
-      </nav>
+      </div>
+    </header>
+
+      
 
       <main>
         <section id="recommendation" className="info-section">

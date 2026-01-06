@@ -25,6 +25,7 @@
   position: relative;
   display: flex;
   align-items: center;
+    border: 2px solid #0000;
 }
 
 /* 3. Dropdown Content: Items in a ROW */
