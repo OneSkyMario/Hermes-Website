@@ -18,7 +18,7 @@ export default function Homepage() {
   const [currentCoffeeIndex, setCurrentCoffeeIndex] = useState(0);
   const [isZooming, setIsZooming] = useState(false);
   const [direction, setDirection] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
+  let [currentIndex, setCurrentIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigation = usePathname(); 
   const router = useRouter();
@@ -91,10 +91,11 @@ export default function Homepage() {
       const scrollLeft = container['scrollLeft'];
       const itemWidth = container['offsetWidth'];
       const index = Math.round(scrollLeft / itemWidth);
+      
       setCurrentIndex(index);
     };
-    addEventListener('scroll', handleScroll);
-    return () => removeEventListener('scroll', handleScroll);
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
   }, []);
   
   
@@ -119,7 +120,6 @@ export default function Homepage() {
     <div>
       <header>
         <h1>OTTO</h1>
-        <p className="subtitle">Transportation Services</p>
       </header>
 
       <nav id='navbar' ref={navbarRef}>
@@ -207,7 +207,7 @@ export default function Homepage() {
                       {/* Coffee Info */}
                       <div className="flex-1 text-white text-center md:text-left">
                         <div className="flex items-center gap-2 mb-3 justify-center md:justify-start">
-                          <Coffee className="w-5 h-5" />
+                          <Coffee className="w-5 h-5 text-stone-800" />
                           <span className="text-sm font-medium uppercase tracking-wider opacity-90">
                             Напиток дня
                           </span>
@@ -246,9 +246,8 @@ export default function Homepage() {
               onClick={() => scrollToIndex(index)}
               className={`transition-all duration-300 rounded-full ${
                 index === currentIndex
-                  ? 'w-8 h-3 bg-stone-700'
-                  : 'w-3 h-3 bg-stone-400 hover:bg-stone-500'
-              }`}
+                  ? 'w-10 h-3 bg-black'      /* ACTIVE: Longer and Darkest (Whiten if background is dark) */
+                  : 'w-3 h-3 bg-stone-300 opacity-50 hover:opacity-100' /* INACTIVE: Small and Light */              }`}
               aria-label={`Go to coffee ${index + 1}`}
             />
           ))}
