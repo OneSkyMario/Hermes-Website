@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown, Zap, Tag, ThumbsUp } from 'lucide-react';
+import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown, Zap, Tag, ThumbsUp, Navigation } from 'lucide-react';
 import { coffees } from '@/lib/coffees';
 import React, { useEffect, useRef, useState } from 'react';
 import './page.css';
@@ -268,6 +268,57 @@ export default function CoffeeDetail() {
                   </div>
                 )}
               </div>
+          {/* Left Column: Logistics & Map */}
+          <div className="logistics-column">
+
+            <div className="logistics-row">
+              {/* Map */}
+              <div className="card map-card">
+                <div className="card-header">
+                  <h3 className="card-title">Autonomous Map</h3>
+                  <span className="badge">4 BOTS ACTIVE</span>
+                </div>
+
+                <div className="map-container">
+                  <div className="map-grid" />
+                  <div className="map-halftone" />
+
+                  <div className="bot bot-main" />
+                  <div className="bot bot-warning" />
+                  <div className="bot bot-idle" />
+
+                  <div className="status-card">
+                    <div className="status-header">
+                      <Navigation size={12} />
+                      <span>Bot #9220 moving south</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div className="progress-fill" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* ETA */}
+              <div className="card eta-card eta-side">
+                <div className="eta-header">
+                  <div className="eta-icon">
+                    <Clock size={14} />
+                  </div>
+                  <div>
+                    <div className="eta-label">Estimated Time</div>
+                    <div className="eta-value">{activeStore.speed}</div>
+                  </div>
+                </div>
+
+                <p className="eta-note">
+                  "Your order is prioritized through the {activeStore.name} hub for optimal thermal retention."
+                </p>
+              </div>
+            </div>
+
+          </div>
+
             </div>
 
           {/* Right Column */}
@@ -312,7 +363,8 @@ export default function CoffeeDetail() {
             </div>
           </div>
         </div>
-
+          
+                
         {/* Coffee Selection */}
         <div className="coffee-selection">
           <div className="coffee-scroll">
