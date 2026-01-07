@@ -126,13 +126,7 @@ export default function CoffeeDetail() {
             </div>
           </div>
 
-          <nav className="nav">
-            <button className="nav-btn active">Models</button>
-            <button className="nav-btn">Services</button>
-            <button className="nav-btn">Shop</button>
-            <button className="nav-btn">Purchase</button>
-            <button className="nav-btn">Contact</button>
-          </nav>
+         
 
           <div className="user-info">
             <div className="user-avatar">
