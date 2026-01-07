@@ -2,9 +2,9 @@
 'use client';
 
 import { useRouter, useParams } from 'next/navigation';
-import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown, Zap, Tag, ThumbsUp, Navigation } from 'lucide-react';
+import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown, Zap, Tag, ThumbsUp, Navigation, Info, Check, Plus, ArrowRight, ShieldCheck } from 'lucide-react';
 import { coffees } from '@/lib/coffees';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './page.css';
 
  const STORES = [
@@ -25,6 +25,15 @@ import './page.css';
     rating: 4.5, price: 4.20, speed: '18m', tag: 'Partner', type: 'Coffee', address: '321 Latte Ln, Berlin', distance: '2.5 km'
   },
 ];
+
+const INGREDIENTS = [
+  { id: 'oat', name: 'Oat Milk', price: 0.50, allergen: false },
+  { id: 'almond', name: 'Almond Milk', price: 0.50, allergen: true, allergenName: 'Nuts' },
+  { id: 'syrup', name: 'Vanilla Bean', price: 0.75, allergen: false },
+  { id: 'honey', name: 'Wild Honey', price: 0.40, allergen: false },
+  { id: 'extra', name: 'Extra Shot', price: 1.20, allergen: false }
+];
+
 const getIcon = (type:String) => {
   switch(type) {
     case 'Zap': return Zap;
@@ -42,9 +51,10 @@ export default function CoffeeDetail() {
   const selectedCoffee = coffees.find(c => c.productID === coffeeId);
   const [activeView, setActiveView] = useState('inside');
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
-  
-
+  const [selectedToppings, setSelectedToppings] = useState<string[]>([]);
+  const [isOrdering, setIsOrdering] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [cartCount, setCartCount] = useState(0);
   const [activeStore, setActiveStore] = useState(STORES[0]);  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event:any) => {
@@ -72,8 +82,33 @@ export default function CoffeeDetail() {
     );
   }
 
+  const totalPrice = useMemo(() => {
+      const toppingsCost = selectedToppings.reduce((acc, id) => {
+        const item = INGREDIENTS.find(i => i.id === id);
+        return acc + (item?.price || 0);
+      }, 0);
+      return activeStore.price + toppingsCost;
+    }, [activeStore, selectedToppings]);
+  
+  const toggleTopping = (id:string) => {
+    setSelectedToppings(prev => 
+      prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]
+    );
+  };
+  
+
+
+
   const handleCoffeeClick = (productID: number) => {
     router.push(`/coffee/${productID}`);
+  };
+
+    const handleOrder = () => {
+    setIsOrdering(true);
+    setTimeout(() => {
+      setIsOrdering(false);
+      setCartCount(prev => prev + 1);
+    }, 2000);
   };
 
   return (
@@ -318,50 +353,88 @@ export default function CoffeeDetail() {
             </div>
 
           </div>
+          {/* Final Order Section */}
+              <div className="checkout-card">
+                <div className="price-summary">
+                  <span className="label">Final Price</span>
+                  <span className="total-value">${totalPrice.toFixed(2)}</span>
+                </div>
+                
 
-            </div>
-
-          {/* Right Column */}
-          <div className="view-section">
-            <div className="view-toggles">
-              <button
-                className={`view-btn ${activeView === 'inside' ? 'active' : ''}`}
-                onClick={() => setActiveView('inside')}
-              >
-                <Coffee className="icon" />
-                <span>Inside</span>
-              </button>
-              <button
-                className={`view-btn ${activeView === 'topped' ? 'active' : ''}`}
-                onClick={() => setActiveView('topped')}
-              >
-                <Coffee className="icon" />
-                <span>Topped</span>
-              </button>
-            </div>
-
-            <div className="coffee-display" style={{ background: selectedCoffee.bgGradient }}>
-              <Coffee className="coffee-icon-large" />
-
-              <div className="floating-info top-right">
-                <div className="floating-label">Объем</div>
-                <div className="floating-value">{selectedCoffee.volume}</div>
-              </div>
-
-              <div className="floating-info bottom-left">
-                <div className="floating-label">Кофеин</div>
-                <div className="floating-value">{selectedCoffee.caffeine}</div>
+                <button 
+                  onClick={handleOrder}
+                  disabled={isOrdering}
+                  className={`launch-btn ${isOrdering ? 'loading' : ''}`}
+                >
+                  {isOrdering ? (
+                    <>Processing Pulse...</>
+                  ) : (
+                    <>Launch Order <ArrowRight size={18} /></>
+                  )}
+                </button>
               </div>
             </div>
 
-            <div className="order-card">
-              <h3 className="order-title">Забронировать место</h3>
-              <p className="order-description">
-                Закажите ваш любимый кофе заранее и избегайте очередей
-              </p>
-              <button className="order-btn">Заказать сейчас</button>
+           {/* Right Column */}
+            <div className="view-section">
+              <div className="view-toggles">
+                <button
+                  className={`view-btn ${activeView === 'inside' ? 'active' : ''}`}
+                  onClick={() => setActiveView('inside')}
+                >
+                  <Coffee className="icon" />
+                  <span>Inside</span>
+                </button>
+                <button
+                  className={`view-btn ${activeView === 'topped' ? 'active' : ''}`}
+                  onClick={() => setActiveView('topped')}
+                >
+                  <Coffee className="icon" />
+                  <span>Topped</span>
+                </button>
+              </div>
+
+              <div className="coffee-display" style={{ background: selectedCoffee.bgGradient }}>
+                <Coffee className="coffee-icon-large" />
+                <div className="floating-info top-right">
+                  <div className="floating-label">Объем</div>
+                  <div className="floating-value">{selectedCoffee.volume}</div>
+                </div>
+                <div className="floating-info bottom-left">
+                  <div className="floating-label">Кофеин</div>
+                  <div className="floating-value">{selectedCoffee.caffeine}</div>
+                </div>
+              </div>
+
+              {/* Customization Section */}
+              <div className="custom-section">
+                <h3 className="section-header-tag">Build Your Dose</h3>
+                <div className="ingredients-grid">
+                  {INGREDIENTS.map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => toggleTopping(item.id)}
+                      className={`ingredient-card ${selectedToppings.includes(item.id) ? 'active' : ''}`}
+                    >
+                      <div className="ingredient-info">
+                        <span className="ingredient-name">{item.name}</span>
+                        {item.allergen && (
+                          <span className="allergen-tag">
+                            <Info size={10} /> {item.allergenName}
+                          </span>
+                        )}
+                      </div>
+                      <div className="ingredient-price-action">
+                        <span className="price-tag">+${item.price.toFixed(2)}</span>
+                        {selectedToppings.includes(item.id) ? <Check size={14} /> : <Plus size={14} />}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              
             </div>
-          </div>
         </div>
           
                 
