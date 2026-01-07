@@ -163,112 +163,111 @@ export default function CoffeeDetail() {
               </div>
             </div>
        {/* Store Selection */}
-{/* Store Selection */}
-<div className="store-section">
-  <h3 className="store-section-title">Выберите магазин</h3>
-  
-  <div className="store-dropdown-container" ref={dropdownRef}>
-    <button 
-      onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-      className="store-dropdown-btn"
-    >
-      <div className="store-dropdown-btn-content">
-        <div className="store-dropdown-icon">
-          {React.createElement(getIcon(activeStore.type), { size: 20 })}
-        </div>
-        <div className="store-dropdown-details">
-          <div className="store-dropdown-tag">
-            Source: {activeStore.tag}
-          </div>
-          <div className="store-dropdown-name">
-            {activeStore.name}
-          </div>
-          <div className="store-dropdown-address">
-            {activeStore.address}
-          </div>
-        </div>
-      </div>
-      <div className="store-dropdown-right">
-        <div className="store-dropdown-stats">
-          <div className="store-dropdown-speed">
-            <Clock size={12} />
-            {activeStore.speed}
-          </div>
-          <div className="store-dropdown-rating">
-            <Star size={12} fill="#fbbf24" stroke="#fbbf24" />
-            {activeStore.rating}
-          </div>
-        </div>
-        <div className={`store-dropdown-chevron ${isStoreDropdownOpen ? 'open' : ''}`}>
-          <ChevronDown size={20} />
-        </div>
-      </div>
-    </button>
+              <div className="store-section">
+                <h3 className="store-section-title">Выберите магазин</h3>
+                
+                <div className="store-dropdown-container" ref={dropdownRef}>
+                  <button 
+                    onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
+                    className="store-dropdown-btn"
+                  >
+                    <div className="store-dropdown-btn-content">
+                      <div className="store-dropdown-icon">
+                        {React.createElement(getIcon(activeStore.type), { size: 20 })}
+                      </div>
+                      <div className="store-dropdown-details">
+                        <div className="store-dropdown-tag">
+                          Source: {activeStore.tag}
+                        </div>
+                        <div className="store-dropdown-name">
+                          {activeStore.name}
+                        </div>
+                        <div className="store-dropdown-address">
+                          {activeStore.address}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="store-dropdown-right">
+                      <div className="store-dropdown-stats">
+                        <div className="store-dropdown-speed">
+                          <Clock size={12} />
+                          {activeStore.speed}
+                        </div>
+                        <div className="store-dropdown-rating">
+                          <Star size={12} fill="#fbbf24" stroke="#fbbf24" />
+                          {activeStore.rating}
+                        </div>
+                      </div>
+                      <div className={`store-dropdown-chevron ${isStoreDropdownOpen ? 'open' : ''}`}>
+                        <ChevronDown size={20} />
+                      </div>
+                    </div>
+                  </button>
 
-    {/* Dropdown Menu */}
-    {isStoreDropdownOpen && (
-      <div className="store-dropdown-menu">
-        <div className="store-dropdown-menu-header">
-          <span className="store-dropdown-menu-title">Доступные магазины</span>
-        </div>
-        <div className="store-dropdown-list">
-          {STORES.map((store) => {
-            const Icon = getIcon(store.type);
-            const isActive = activeStore.id === store.id;
-            
-            return (
-              <button 
-                key={store.id}
-                onClick={() => {
-                  setActiveStore(store);
-                  setIsStoreDropdownOpen(false);
-                }}
-                className={`store-dropdown-item ${isActive ? 'active' : ''}`}
-              >
-                <div className="store-dropdown-item-left">
-                  <div className="store-dropdown-item-icon">
-                    <Icon size={20} />
-                  </div>
-                  <div className="store-dropdown-item-info">
-                    <div className="store-dropdown-item-tag">
-                      {store.tag}
+                  {/* Dropdown Menu */}
+                  {isStoreDropdownOpen && (
+                    <div className="store-dropdown-menu">
+                      <div className="store-dropdown-menu-header">
+                        <span className="store-dropdown-menu-title">Доступные магазины</span>
+                      </div>
+                      <div className="store-dropdown-list">
+                        {STORES.map((store) => {
+                          const Icon = getIcon(store.type);
+                          const isActive = activeStore.id === store.id;
+                          
+                          return (
+                            <button 
+                              key={store.id}
+                              onClick={() => {
+                                setActiveStore(store);
+                                setIsStoreDropdownOpen(false);
+                              }}
+                              className={`store-dropdown-item ${isActive ? 'active' : ''}`}
+                            >
+                              <div className="store-dropdown-item-left">
+                                <div className="store-dropdown-item-icon">
+                                  <Icon size={20} />
+                                </div>
+                                <div className="store-dropdown-item-info">
+                                  <div className="store-dropdown-item-tag">
+                                    {store.tag}
+                                  </div>
+                                  <div className="store-dropdown-item-name">
+                                    {store.name}
+                                  </div>
+                                  <div className="store-dropdown-item-address">
+                                    {store.address}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="store-dropdown-item-right">
+                                <div className="store-dropdown-item-rating">
+                                  <Star size={12} fill="#fbbf24" stroke="#fbbf24" />
+                                  {store.rating}
+                                </div>
+                                <div className="store-dropdown-item-speed">
+                                  <Clock size={11} />
+                                  {store.speed}
+                                </div>
+                                <div className="store-dropdown-item-distance">
+                                  {store.distance}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="store-dropdown-item-name">
-                      {store.name}
-                    </div>
-                    <div className="store-dropdown-item-address">
-                      {store.address}
-                    </div>
-                  </div>
+                  )}
                 </div>
-                <div className="store-dropdown-item-right">
-                  <div className="store-dropdown-item-rating">
-                    <Star size={12} fill="#fbbf24" stroke="#fbbf24" />
-                    {store.rating}
-                  </div>
-                  <div className="store-dropdown-item-speed">
-                    <Clock size={11} />
-                    {store.speed}
-                  </div>
-                  <div className="store-dropdown-item-distance">
-                    {store.distance}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    )}
-  </div>
 
-  {selectedStore && (
-    <div className="selected-store-info">
-      <div className="selected-store-label">Выбранный магазин:</div>
-      <div className="selected-store-name">{selectedStore.name}</div>
-    </div>
-  )}
-</div>
+                {selectedStore && (
+                  <div className="selected-store-info">
+                    <div className="selected-store-label">Выбранный магазин:</div>
+                    <div className="selected-store-name">{selectedStore.name}</div>
+                  </div>
+                )}
+              </div>
             </div>
 
           {/* Right Column */}

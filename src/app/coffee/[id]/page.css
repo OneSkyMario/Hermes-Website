@@ -555,10 +555,24 @@
   border-radius: 0;
   box-shadow: 5px 5px 0 rgba(107, 107, 107, 0.5);
   overflow: hidden;
-  z-index: 50;
+  z-index: 1000;
   animation: slideUp 0.3s ease-out;
+  scroll-behavior: smooth; /* Smooth scrolling animation */
+  -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS */
+  scroll-snap-type: x mandatory; /* Ensures items snap into place */ 
+
+}
+/* For the dropdown menu container */
+.store-dropdown-menu::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+  display: none;  
 }
 
+/* For the scrollable list inside */
+.store-dropdown-list::-webkit-scrollbar {
+  width: 0px;
+}
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -587,6 +601,13 @@
 .store-dropdown-list {
   max-height: 320px;
   overflow-y: auto;
+    z-index: 1000;
+   /* Hide scrollbar for Chrome, Safari and Opera */
+  -webkit-scrollbar-width: none;
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Individual Store Item */
@@ -749,10 +770,16 @@
   overflow-x: auto;
   padding: 1rem 0.5rem 1rem;
   margin: -0.5rem;
+     /* Hide scrollbar for Chrome, Safari and Opera */
+  -webkit-scrollbar-width: none;
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .coffee-scroll::-webkit-scrollbar {
-  height: 8px;
+  height: 0px;
 }
 
 .coffee-scroll::-webkit-scrollbar-track {
