@@ -6,7 +6,6 @@ import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown,
 import { coffees } from '@/lib/coffees';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './page.css';
-
  const STORES = [
   { 
     id: 's1', name: 'Mitte Roastery', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop',

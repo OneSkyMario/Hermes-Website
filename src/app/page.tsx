@@ -12,6 +12,7 @@ import latteImage from '../assets/espresso.webp'; // Temporary, replace with lat
 import robotImage from '../assets/image.png'; // Add your robot PNG here
 import { coffees } from '@/lib/coffees';
 
+
 export default function Homepage() {
   const navbarRef = useRef<HTMLElement>(null);
   const robotRef = useRef<HTMLImageElement>(null);
@@ -150,9 +151,10 @@ export default function Homepage() {
       <div className="user-info">
         <div className="user-avatar">
           <span>GA</span> </div>
-        <div className="user-details">
+        <div className="user-details" onClick={() => router.push('/registration/')}>
           <p className="user-name">Grayson Adler</p>
           <p className="user-role">Account manager</p>
+          
         </div>
       </div>
     </header>
