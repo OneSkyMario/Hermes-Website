@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Coffee, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Coffee, LogOut } from 'lucide-react';
 import { usePathname } from 'next/navigation'; // Optional: for active link highlighting
 import './navbar.css'
 import './page.css';
@@ -11,7 +11,8 @@ import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace wit
 import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
 import robotImage from '../assets/image.png'; // Add your robot PNG here
 import { coffees } from '@/lib/coffees';
-
+import { useAuth } from '@/app/context/AuthContext';
+import AuthModal from './registration/page';
 
 export default function Homepage() {
   const navbarRef = useRef<HTMLElement>(null);
@@ -23,9 +24,14 @@ export default function Homepage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const navigation = usePathname(); 
   const router = useRouter();
-  
+  const { user, logout, loading } = useAuth();
+  const [modalState, setModalState] = useState({ isOpen: false, isLogin: true });
 
-  // Separate useEffect for navbar hide/show on page scroll
+  if (loading) return null;
+
+  const openAuth = (loginMode: boolean) => {
+    setModalState({ isOpen: true, isLogin: loginMode });
+  };
   // Separate useEffect for navbar hide/show on page scroll
   useEffect(() => {
   let lastScrollY = window.scrollY;
@@ -151,12 +157,39 @@ export default function Homepage() {
       <div className="user-info">
         <div className="user-avatar">
           <span>GA</span> </div>
-        <div className="user-details" onClick={() => router.push('/registration/')}>
-          <p className="user-name">Grayson Adler</p>
-          <p className="user-role">Account manager</p>
-          
+        <div className="user-details">
+        <div className="nav">
+          {!user ? (
+            <>
+              <button onClick={() => openAuth(true)}
+                className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
+                Login
+              </button>
+              <button onClick={() => openAuth(false)}
+              className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
+                Sign Up
+              </button>
+            </>
+          ) : (
+            <div className="user-info">
+              <div className="user-avatar">
+                {user.full_name[0].toUpperCase()}
+              </div>
+              <button onClick={logout} className="back-btn">
+                <LogOut size={18} />
+              </button>
+            </div>
+          )}
         </div>
+        </div>
+        
       </div>
+      {/* The Popup component */}
+      <AuthModal 
+        isOpen={modalState.isOpen} 
+        initialLogin={modalState.isLogin}
+        onClose={() => setModalState({ ...modalState, isOpen: false })} 
+      />
     </header>
 
       

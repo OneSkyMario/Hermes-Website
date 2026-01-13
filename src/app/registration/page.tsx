@@ -1,122 +1,144 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Coffee, ArrowRight, Lock, Mail, User, ShieldCheck, Github, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Coffee, ArrowRight, Lock, Mail, User, ChevronLeft, X } from "lucide-react";
 
-export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
+interface AuthModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialLogin?: boolean;
+}
+
+export default function AuthModal({ isOpen, onClose, initialLogin = true }: AuthModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [isLogin, setIsLogin] = useState(initialLogin);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    setMounted(true);
+    setIsLogin(initialLogin);
+  }, [initialLogin, isOpen]);
+
+  if (!mounted || !isOpen) return null;
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    const endpoint = isLogin ? "login/" : "registration/";
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/auth/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: email,
+          password,
+          ...(isLogin ? {} : { full_name: fullName })
+        }),
+      });
+
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+      
+      window.location.reload(); // Refresh to update user context
+    } catch {
+      setError("Authorization Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="page-wrapper min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Halftone Background Overlay */}
-      <div className="halftone-overlay" />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* 1. Backdrop (The dark blurry part behind) */}
+      <div 
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+        onClick={onClose} 
+      />
 
-      <div className="container max-w-[480px] w-full bg-[#f5f5f5] border-[3px] border-[#6b6b6b] relative z-10 shadow-[8px_8px_0_rgba(107,107,107,0.5)] transition-all duration-300">
+      {/* 2. The Modal Card */}
+      <div className="container max-w-[400px] w-full bg-[#f5f5f5] border-[3px] border-[#6b6b6b] relative z-10 shadow-[12px_12px_0_#4a4a4a] animate-in fade-in zoom-in duration-200">
         
-        {/* Header Section */}
-        <div className="header border-b-[3px] border-[#6b6b6b] p-6 text-center bg-[#f5f5f5] relative">
-            {!isLogin && (
-                <button 
-                    onClick={() => setIsLogin(true)}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 border-2 border-[#6b6b6b] flex items-center justify-center hover:bg-[#6b6b6b] hover:text-white transition-colors"
-                >
-                    <ChevronLeft size={20} />
-                </button>
-            )}
-          <div className="logo flex justify-center items-center gap-2 text-2xl font-black uppercase tracking-[4px] text-[#4a4a4a]">
-            <Coffee size={32} strokeWidth={3} />
-            <span>OTTO</span>
-          </div>
-          <p className="text-[0.7rem] font-bold uppercase tracking-widest text-[#7a7a7a] mt-2">
-            {isLogin ? "Terminal Access Protocol" : "New Unit Enrollment"}
-          </p>
-        </div>
+        {/* Close Button */}
+        <button 
+          onClick={onClose}
+          className="absolute right-4 top-4 hover:rotate-90 transition-transform text-[#7a7a7a] hover:text-black"
+        >
+          <X size={20} strokeWidth={3} />
+        </button>
 
-        {/* Dynamic Form Content */}
-        <div className="p-8">
-          <form className="flex flex-col gap-5" onSubmit={(e) => e.preventDefault()}>
-            
-            {!isLogin && (
-              <div className="flex flex-col gap-2">
-                <label className="section-header-tag">Operator Full Name</label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={18} />
-                  <input 
-                    type="text" 
-                    placeholder="J. DOE"
-                    className="w-full bg-white border-2 border-[#6b6b6b] p-3 pl-12 font-bold focus:outline-none focus:shadow-[4px_4px_0_#4a4a4a] transition-all"
-                  />
-                </div>
-              </div>
-            )}
 
-            <div className="flex flex-col gap-2">
-              <label className="section-header-tag">Operator ID (Email)</label>
+        <form className="p-6 flex flex-col gap-4" onSubmit={handleAuth}>
+          {!isLogin && (
+            <div className="flex flex-col gap-1">
+              <label className="section-header-tag text-[9px]">Full Name</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={18} />
-                <input 
-                  type="email" 
-                  placeholder="name@brewos.com"
-                  className="w-full bg-white border-2 border-[#6b6b6b] p-3 pl-12 font-bold focus:outline-none focus:shadow-[4px_4px_0_#4a4a4a] transition-all"
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+                <input
+                  type="text"
+                  placeholder="NAME"
+                  required
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-white border-2 border-[#6b6b6b] p-2 pl-10 font-bold text-sm focus:shadow-[4px_4px_0_rgba(107,107,107,0.2)] outline-none"
                 />
               </div>
             </div>
-
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-end">
-                <label className="section-header-tag">Access Key</label>
-                {isLogin && <a href="#" className="text-[9px] font-black uppercase text-[#7a7a7a] hover:text-[#4a4a4a] mb-1">Forgot?</a>}
-              </div>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={18} />
-                <input 
-                  type="password" 
-                  placeholder="••••••••"
-                  className="w-full bg-white border-2 border-[#6b6b6b] p-3 pl-12 font-bold focus:outline-none focus:shadow-[4px_4px_0_#4a4a4a] transition-all"
-                />
-              </div>
-            </div>
-
-            {!isLogin && (
-              <div className="flex items-center gap-3 mt-2 p-3 bg-white border-2 border-dashed border-[#6b6b6b]">
-                <input type="checkbox" className="w-4 h-4 accent-[#6b6b6b]" id="terms" />
-                <label htmlFor="terms" className="text-[10px] font-bold text-[#7a7a7a] uppercase leading-tight">
-                  I accept all <span className="text-[#4a4a4a] underline cursor-pointer">Security Protocols</span> and system mandates.
-                </label>
-              </div>
-            )}
-
-            <button className="launch-btn group mt-4">
-              {isLogin ? "Log In" : "Deploy Operator Unit"}
-              <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} strokeWidth={3} />
-            </button>
-
-            {/* Social Auth (Compact) */}
-            <div className="grid grid-cols-2 gap-3 mt-2">
-              <button className="ingredient-card flex justify-center items-center gap-2 py-2">
-                <Github size={16} />
-                <span className="text-[9px] font-black uppercase">GitHub</span>
-              </button>
-              <button className="ingredient-card flex justify-center items-center gap-2 py-2">
-                <ShieldCheck size={16} />
-                <span className="text-[9px] font-black uppercase">SAML SSO</span>
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Navigation Footer */}
-        <div className="bg-[#e5e5e5] p-5 border-t-2 border-[#6b6b6b] text-center">
-          {isLogin ? (
-            <p className="text-[11px] font-bold text-[#7a7a7a] uppercase tracking-tight">
-              No credentials? <span onClick={() => setIsLogin(false)} className="text-[#4a4a4a] cursor-pointer hover:underline decoration-2 underline-offset-4">Sign Up</span>
-            </p>
-          ) : (
-            <p className="text-[11px] font-bold text-[#7a7a7a] uppercase tracking-tight">
-              Already Enrolled? <span onClick={() => setIsLogin(true)} className="text-[#4a4a4a] cursor-pointer hover:underline decoration-2 underline-offset-4">Return to Login</span>
-            </p>
           )}
-        </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="section-header-tag text-[9px]">Operator ID</label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+              <input
+                type="email"
+                placeholder="EMAIL@NU.KZ"
+                required
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-white border-2 border-[#6b6b6b] p-2 pl-10 font-bold text-sm focus:shadow-[4px_4px_0_rgba(107,107,107,0.2)] outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="section-header-tag text-[9px]">Access Key</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7a7a7a]" size={16} />
+              <input
+                type="password"
+                placeholder="••••"
+                required
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-white border-2 border-[#6b6b6b] p-2 pl-10 font-bold text-sm focus:shadow-[4px_4px_0_rgba(107,107,107,0.2)] outline-none"
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-red-600 text-[10px] font-black text-center uppercase tracking-widest">{error}</p>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="order-btn flex items-center justify-center gap-2 py-3 mt-2 active:translate-y-1 active:shadow-none"
+          >
+            {loading ? "VERIFYING..." : isLogin ? "AUTHORIZE" : "ENROLL UNIT"}
+            <ArrowRight size={20} strokeWidth={3} />
+          </button>
+
+          <div 
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-[10px] font-black text-[#7a7a7a] text-center cursor-pointer hover:text-black uppercase mt-2"
+          >
+            {isLogin ? "Need access? Request Credentials" : "Back to Login"}
+          </div>
+        </form>
       </div>
     </div>
   );
