@@ -15,7 +15,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import AuthModal from './registration/page';
 
 export default function Homepage() {
-  // 1. All Refs
+// 1. All Refs
   const navbarRef = useRef<HTMLElement>(null);
   const robotRef = useRef<HTMLImageElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -31,37 +31,47 @@ export default function Homepage() {
   const pathname = usePathname(); 
   const router = useRouter();
   const { user, logout, loading } = useAuth();
-
-  // 4. ALL EFFECT HOOKS (Must stay at the top level)
   
-  // Navbar Scroll Logic
+
+  // Separate useEffect for navbar hide/show on page scroll
+  // 4. ALL EFFECT HOOKS (Must stay at the top level)
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-    
-    const handleScroll = () => {
+  let lastScrollY = window.scrollY;
+  
+  const handleScroll = () => {
       const navbar = navbarRef.current;
       if (!navbar) return;
+      
       const isMobile = window.innerWidth <= 768;
       const currentScrollY = window.scrollY;
       
       if (isMobile) {
+        // On mobile, navbar is not sticky - stays below header
         navbar.style.position = 'relative';
         navbar.style.transform = 'translateY(0)';
       } else {
+        // On desktop, navbar is sticky and hides/shows
         navbar.style.position = 'sticky';
+        
         if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          // Scrolling down
           navbar.style.transform = 'translateY(-100%)';
         } else {
+          // Scrolling up
           navbar.style.transform = 'translateY(0)';
         }
       }
+      
       lastScrollY = currentScrollY;
     };
-
+    
     const handleResize = () => {
       const navbar = navbarRef.current;
       if (!navbar) return;
-      if (window.innerWidth <= 768) {
+      
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMobile) {
         navbar.style.position = 'relative';
         navbar.style.transform = 'translateY(0)';
       } else {
@@ -71,42 +81,50 @@ export default function Homepage() {
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
+    
+    // Initial check
     handleResize();
-
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  // Scroll Container Logic
-  useEffect(() => {
+    useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
-      const scrollLeft = container.scrollLeft;
-      const itemWidth = container.offsetWidth;
+      const scrollLeft = container['scrollLeft'];
+      const itemWidth = container['offsetWidth'];
       const index = Math.round(scrollLeft / itemWidth);
+      
       setCurrentIndex(index);
     };
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
-
   // 5. HELPER FUNCTIONS
+
   const openAuth = (loginMode: boolean) => {
     setModalState({ isOpen: true, isLogin: loginMode });
   };
-
+  
   const scrollToIndex = (index: number) => {
-    const container = scrollContainerRef.current;
+    const container = scrollContainerRef['current'];
     if (!container) return;
-    const itemWidth = container.offsetWidth;
-    container.scrollTo({ left: itemWidth * index, behavior: 'smooth' });
+    
+    const itemWidth = container['offsetWidth'];
+    container.scrollTo({
+      left: itemWidth * index,
+      behavior: 'smooth'
+    });
   };
+  
 
   const handleCoffeeClick = (productID: number) => {
+    // Navigate to coffee detail page
     router.push(`/coffee/${productID}`);
   };
 
@@ -118,6 +136,8 @@ export default function Homepage() {
       </div>
     );
   }
+  // 7. MAIN RENDER
+
   return (
     <div>
       <header className="header" ref={navbarRef}>
