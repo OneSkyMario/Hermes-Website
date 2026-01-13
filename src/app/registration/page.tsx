@@ -19,12 +19,21 @@ export default function AuthModal({ isOpen, onClose, initialLogin = true }: Auth
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isOpen]);
+
+  useEffect(() => {
     setMounted(true);
     setIsLogin(initialLogin);
   }, [initialLogin, isOpen]);
 
   if (!mounted || !isOpen) return null;
-
+  
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -65,8 +74,7 @@ export default function AuthModal({ isOpen, onClose, initialLogin = true }: Auth
       />
 
       {/* 2. The Modal Card */}
-      <div className="container max-w-[400px] w-full bg-[#f5f5f5] border-[3px] border-[#6b6b6b] relative z-10 shadow-[12px_12px_0_#4a4a4a] animate-in fade-in zoom-in duration-200">
-        
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] w-[90%] bg-[#f5f5f5] border-[3px] border-[#6b6b6b] z-[10000] shadow-[12px_12px_0_#000]">        
         {/* Close Button */}
         <button 
           onClick={onClose}

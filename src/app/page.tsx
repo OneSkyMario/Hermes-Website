@@ -199,12 +199,7 @@ export default function Homepage() {
         </div>
         
       </div>
-      {/* The Popup component */}
-      <AuthModal 
-        isOpen={modalState.isOpen} 
-        initialLogin={modalState.isLogin}
-        onClose={() => setModalState({ ...modalState, isOpen: false })} 
-      />
+      
     </header>
 
       
@@ -365,6 +360,12 @@ export default function Homepage() {
         <p>&copy; 2026 OTTO Transportation Services | All Rights Reserved</p>
         <p>Automated Delivery • Robot Assistance • 24/7 Service</p>
       </footer>
+      {/* The Popup component */}
+      <AuthModal 
+        isOpen={modalState.isOpen} 
+        initialLogin={modalState.isLogin}
+        onClose={() => setModalState({ ...modalState, isOpen: false })} 
+      />
     </div>
   );
 }

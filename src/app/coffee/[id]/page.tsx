@@ -147,48 +147,10 @@ export default function CoffeeDetail() {
               <p className="coffee-subtitle">{selectedCoffee.subtitle}</p>
             </div>
 
-            <div className="price">{selectedCoffee.price}</div>
+            <div className="price"></div>
 
             <div className="info-card">
-              <div className="info-card-header">
-                <MapPin className="icon" />
-                <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Происхождение</span>
-              </div>
-              <div style={{ fontSize: '0.875rem', color: '#555' }}>{selectedCoffee.origin}</div>
-            </div>
-
-            <div className="specs-grid">
-              <div className="info-card">
-                <div className="info-card-header">
-                  <Thermometer className="icon" />
-                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Температура</span>
-                </div>
-                <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{selectedCoffee.temperature}</div>
-              </div>
-
-              <div className="info-card">
-                <div className="info-card-header">
-                  <Clock className="icon" />
-                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Время</span>
-                </div>
-                <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{selectedCoffee.brewTime}</div>
-              </div>
-
-              <div className="info-card">
-                <div className="info-card-header">
-                  <Coffee className="icon" />
-                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Цвет</span>
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>{selectedCoffee.color}</div>
-              </div>
-
-              <div className="info-card">
-                <div className="info-card-header">
-                  <Star className="icon" />
-                  <span style={{ fontSize: '0.75rem', color: '#666' }}>Крепость</span>
-                </div>
-                <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>{selectedCoffee.intensity}</div>
-              </div>
+              information about 
             </div>
        {/* Store Selection */}
               <div className="store-section">
@@ -370,23 +332,7 @@ export default function CoffeeDetail() {
 
            {/* Right Column */}
             <div className="view-section">
-              <div className="view-toggles">
-                <button
-                  className={`view-btn ${activeView === 'inside' ? 'active' : ''}`}
-                  onClick={() => setActiveView('inside')}
-                >
-                  <Coffee className="icon" />
-                  <span>Inside</span>
-                </button>
-                <button
-                  className={`view-btn ${activeView === 'topped' ? 'active' : ''}`}
-                  onClick={() => setActiveView('topped')}
-                >
-                  <Coffee className="icon" />
-                  <span>Topped</span>
-                </button>
-              </div>
-
+              {/* Coffee Display */}
               <div className="coffee-display" style={{ background: selectedCoffee.bgGradient }}>
                 <Coffee className="coffee-icon-large" />
                 <div className="floating-info top-right">
