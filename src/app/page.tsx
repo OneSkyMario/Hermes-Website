@@ -15,114 +15,109 @@ import { useAuth } from '@/app/context/AuthContext';
 import AuthModal from './registration/page';
 
 export default function Homepage() {
+  // 1. All Refs
   const navbarRef = useRef<HTMLElement>(null);
   const robotRef = useRef<HTMLImageElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // 2. All State Hooks
   const [currentCoffeeIndex, setCurrentCoffeeIndex] = useState(0);
   const [isZooming, setIsZooming] = useState(false);
   const [direction, setDirection] = useState('');
-  let [currentIndex, setCurrentIndex] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const navigation = usePathname(); 
-  const router = useRouter();
-  const { user, logout, loading } = useAuth();
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [modalState, setModalState] = useState({ isOpen: false, isLogin: true });
 
-  if (loading) return null;
+  // 3. Navigation/Auth Hooks
+  const pathname = usePathname(); 
+  const router = useRouter();
+  const { user, logout, loading } = useAuth();
 
-  const openAuth = (loginMode: boolean) => {
-    setModalState({ isOpen: true, isLogin: loginMode });
-  };
-  // Separate useEffect for navbar hide/show on page scroll
+  // 4. ALL EFFECT HOOKS (Must stay at the top level)
+  
+  // Navbar Scroll Logic
   useEffect(() => {
-  let lastScrollY = window.scrollY;
-  
-  const handleScroll = () => {
-    const navbar = navbarRef.current;
-    if (!navbar) return;
+    let lastScrollY = window.scrollY;
     
-    const isMobile = window.innerWidth <= 768;
-    const currentScrollY = window.scrollY;
-    
-    if (isMobile) {
-      // On mobile, navbar is not sticky - stays below header
-      navbar.style.position = 'relative';
-      navbar.style.transform = 'translateY(0)';
-    } else {
-      // On desktop, navbar is sticky and hides/shows
-      navbar.style.position = 'sticky';
+    const handleScroll = () => {
+      const navbar = navbarRef.current;
+      if (!navbar) return;
+      const isMobile = window.innerWidth <= 768;
+      const currentScrollY = window.scrollY;
       
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down
-        navbar.style.transform = 'translateY(-100%)';
-      } else {
-        // Scrolling up
+      if (isMobile) {
+        navbar.style.position = 'relative';
         navbar.style.transform = 'translateY(0)';
+      } else {
+        navbar.style.position = 'sticky';
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          navbar.style.transform = 'translateY(-100%)';
+        } else {
+          navbar.style.transform = 'translateY(0)';
+        }
       }
-    }
-    
-    lastScrollY = currentScrollY;
-  };
-  
-  const handleResize = () => {
-    const navbar = navbarRef.current;
-    if (!navbar) return;
-    
-    const isMobile = window.innerWidth <= 768;
-    
-    if (isMobile) {
-      navbar.style.position = 'relative';
-      navbar.style.transform = 'translateY(0)';
-    } else {
-      navbar.style.position = 'sticky';
-    }
-  };
+      lastScrollY = currentScrollY;
+    };
 
-  window.addEventListener('scroll', handleScroll);
-  window.addEventListener('resize', handleResize);
-  
-  // Initial check
-  handleResize();
-  
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    window.removeEventListener('resize', handleResize);
-  };
-}, []);
+    const handleResize = () => {
+      const navbar = navbarRef.current;
+      if (!navbar) return;
+      if (window.innerWidth <= 768) {
+        navbar.style.position = 'relative';
+        navbar.style.transform = 'translateY(0)';
+      } else {
+        navbar.style.position = 'sticky';
+      }
+    };
 
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    handleResize();
 
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Scroll Container Logic
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
-      const scrollLeft = container['scrollLeft'];
-      const itemWidth = container['offsetWidth'];
+      const scrollLeft = container.scrollLeft;
+      const itemWidth = container.offsetWidth;
       const index = Math.round(scrollLeft / itemWidth);
-      
       setCurrentIndex(index);
     };
     container.addEventListener('scroll', handleScroll);
     return () => container.removeEventListener('scroll', handleScroll);
   }, []);
-  
-  
-  const scrollToIndex = (index: number) => {
-    const container = scrollContainerRef['current'];
-    if (!container) return;
-    
-    const itemWidth = container['offsetWidth'];
-    container.scrollTo({
-      left: itemWidth * index,
-      behavior: 'smooth'
-    });
+
+  // 5. HELPER FUNCTIONS
+  const openAuth = (loginMode: boolean) => {
+    setModalState({ isOpen: true, isLogin: loginMode });
   };
-  
+
+  const scrollToIndex = (index: number) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const itemWidth = container.offsetWidth;
+    container.scrollTo({ left: itemWidth * index, behavior: 'smooth' });
+  };
 
   const handleCoffeeClick = (productID: number) => {
-    // Navigate to coffee detail page
     router.push(`/coffee/${productID}`);
   };
 
+  // 6. CONDITIONAL RENDERING (Place this AFTER all hooks)
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f5]">
+        <div className="animate-pulse font-black text-[#6b6b6b]">INITIALIZING TERMINAL...</div>
+      </div>
+    );
+  }
   return (
     <div>
       <header className="header" ref={navbarRef}>
