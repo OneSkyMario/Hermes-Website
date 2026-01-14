@@ -6,6 +6,7 @@ import { Coffee, MapPin, Thermometer, Clock, Star, User, ArrowLeft, ChevronDown,
 import { coffees } from '@/lib/coffees';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './page.css';
+import { useShop } from '@/app/context/ShopContext';
  const STORES = [
   { 
     id: 's1', name: 'Mitte Roastery', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop',
@@ -55,6 +56,9 @@ export default function CoffeeDetail() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [cartCount, setCartCount] = useState(0);
   const [activeStore, setActiveStore] = useState(STORES[0]);  // Close dropdown when clicking outside
+  const { getCoffeeById, loading } = useShop();
+  const coffee = getCoffeeById(coffeeId);
+
   useEffect(() => {
     const handleClickOutside = (event:any) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -333,7 +337,7 @@ export default function CoffeeDetail() {
            {/* Right Column */}
             <div className="view-section">
               {/* Coffee Display */}
-              <div className="coffee-display" style={{ background: selectedCoffee.bgGradient }}>
+              <div className="coffee-display" style={{ background: "from-amber-900 to-amber-700" }}>
                 <Coffee className="coffee-icon-large" />
                 <div className="floating-info top-right">
                   <div className="floating-label">Объем</div>
@@ -386,7 +390,7 @@ export default function CoffeeDetail() {
                 className={`coffee-card ${selectedCoffee.productID === coffee.productID ? 'active' : ''}`}
                 onClick={() => handleCoffeeClick(coffee.productID)}
               >
-                <div className="coffee-card-icon" style={{ background: coffee.bgGradient }}>
+                <div className="coffee-card-icon" style={{ background: "from-amber-900 to-amber-700" }}>
                   <Coffee style={{ width: '24px', height: '24px' }} />
                 </div>
                 <div className="coffee-card-name">{coffee.name}</div>

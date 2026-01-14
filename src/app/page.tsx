@@ -10,9 +10,9 @@ import coffeeImage from '../assets/espresso.webp';
 import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace with cappiccuno.webp
 import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
 import robotImage from '../assets/image.png'; // Add your robot PNG here
-import { coffees } from '@/lib/coffees';
 import { useAuth } from '@/app/context/AuthContext';
 import AuthModal from './registration/page';
+import { useShop } from './context/ShopContext';
 
 export default function Homepage() {
 // 1. All Refs
@@ -21,9 +21,6 @@ export default function Homepage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 2. All State Hooks
-  const [currentCoffeeIndex, setCurrentCoffeeIndex] = useState(0);
-  const [isZooming, setIsZooming] = useState(false);
-  const [direction, setDirection] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalState, setModalState] = useState({ isOpen: false, isLogin: true });
 
@@ -31,7 +28,7 @@ export default function Homepage() {
   const pathname = usePathname(); 
   const router = useRouter();
   const { user, logout, loading } = useAuth();
-  
+  const { coffees, loading: shopLoading, error: shopError } = useShop();
 
   // Separate useEffect for navbar hide/show on page scroll
   // 4. ALL EFFECT HOOKS (Must stay at the top level)
