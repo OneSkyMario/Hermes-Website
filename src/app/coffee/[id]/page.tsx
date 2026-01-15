@@ -7,6 +7,8 @@ import { coffees } from '@/lib/coffees';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import './page.css';
 import { useShop } from '@/app/context/ShopContext';
+import MapComponent from '@/app/MapComponent/Map';
+
  const STORES = [
   { 
     id: 's1', name: 'Mitte Roastery', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?q=80&w=800&auto=format&fit=crop',
@@ -262,56 +264,10 @@ export default function CoffeeDetail() {
                   </div>
                 )}
               </div>
-          {/* Left Column: Logistics & Map */}
-          <div className="logistics-column">
-
-            <div className="logistics-row">
-              {/* Map */}
-              <div className="card map-card">
-                <div className="card-header">
-                  <h3 className="card-title">Autonomous Map</h3>
-                  <span className="badge">4 BOTS ACTIVE</span>
-                </div>
-
-                <div className="map-container">
-                  <div className="map-grid" />
-                  <div className="map-halftone" />
-
-                  <div className="bot bot-main" />
-                  <div className="bot bot-warning" />
-                  <div className="bot bot-idle" />
-
-                  <div className="status-card">
-                    <div className="status-header">
-                      <Navigation size={12} />
-                      <span>Bot #9220 moving south</span>
-                    </div>
-                    <div className="progress-bar">
-                      <div className="progress-fill" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* ETA */}
-              <div className="card eta-card eta-side">
-                <div className="eta-header">
-                  <div className="eta-icon">
-                    <Clock size={14} />
-                  </div>
-                  <div>
-                    <div className="eta-label">Estimated Time</div>
-                    <div className="eta-value">{activeStore.speed}</div>
-                  </div>
-                </div>
-
-                <p className="eta-note">
-                  "Your order is prioritized through the {activeStore.name} hub for optimal thermal retention."
-                </p>
-              </div>
-            </div>
-
-          </div>
+          
+          <MapComponent>
+            
+          </MapComponent>
           {/* Final Order Section */}
               <div className="checkout-card">
                 <div className="price-summary">

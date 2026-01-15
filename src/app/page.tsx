@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Coffee, LogOut } from 'lucide-react';
+import { Coffee, LogOut, User } from 'lucide-react';
 import { usePathname } from 'next/navigation'; // Optional: for active link highlighting
 import './navbar.css'
 import './page.css';
@@ -139,15 +139,15 @@ export default function Homepage() {
     <div>
       <header className="header" ref={navbarRef}>
       <div className="header-left">
-      <div className="logo-circle">
+        <div className="logo-circle">
           <Coffee className="w-6 h-6" /> </div>
-    <h1 className="logo-text">Otto</h1>
-      </div>
+        <h1 className="logo-text">Otto</h1>
+        </div>
       
-      <nav className="nav-center">
-        <div className="dropdown">
-          <a href="#" className="nav-link active">Drinks</a>
-          <div className="dropdown-content">
+        <nav className="nav-center">
+          <div className="dropdown">
+            <a href="#" className="nav-link active">Drinks</a>
+          < div className="dropdown-content">
             <div className="dropdown">
               <a href="#Coffee">Coffee</a>
               </div>
@@ -168,31 +168,29 @@ export default function Homepage() {
         </nav>
       <div className="user-info">
         <div className="user-avatar">
-          <span>GA</span> </div>
+          <span>{user?.full_name[0]}</span> </div>
         <div className="user-details">
-        <div className="nav">
-          {!user ? (
-            <>
-              <button onClick={() => openAuth(true)}
-                className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
-                Login
-              </button>
-              <button onClick={() => openAuth(false)}
-              className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
-                Sign Up
-              </button>
-            </>
-          ) : (
-            <div className="user-info">
-              <div className="user-avatar">
-                {user.full_name[0].toUpperCase()}
+        {/* Mobile-friendly User Info */}
+      <div className="flex items-center gap-[1rem]">
+        {user ? (
+          <div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
+                <User size={20} />
+                <span className="font-semibold">{user.email}</span>
               </div>
-              <button onClick={logout} className="back-btn">
-                <LogOut size={18} />
-              </button>
+          <button onClick={logout} className="p-[0.5rem] border-[0.15rem] border-black hover:bg-black hover:text-white transition-colors">
+            <LogOut size={18} />
+          </button>
+          </div>
+        ) : (
+          <div> 
+            <div> <button onClick={() => openAuth(true)} className="text-[0.8rem] font-black uppercase border-b-[0.2rem] border-black">Login</button>
             </div>
-          )}
-        </div>
+            <div> <button onClick={() => openAuth(false)} className="text-[0.8rem] font-black uppercase border-b-[0.2rem] border-black">Sign Up</button>
+            </div>
+          </div>
+        )}
+      </div>
         </div>
         
       </div>
