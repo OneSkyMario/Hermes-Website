@@ -22,8 +22,13 @@ interface Floors {
   [key: number]: Floor;
 }
 
-export default function MapComponent() {
-  const [isMapOpen, setIsMapOpen] = useState(false);
+interface MapComponentProps {
+  initialOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function MapComponent({ initialOpen = false, onClose }: MapComponentProps) {
+  const [isMapOpen, setIsMapOpen] = useState(initialOpen);
   const [currentFloor, setCurrentFloor] = useState(1);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
@@ -74,93 +79,12 @@ export default function MapComponent() {
   };
 
   return (
-    <div style={{background: '#f5f5f5', padding: '1rem' }}>
-      {/* Map Card in Layout */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        <div className="logistics-row">
-          {/* Map Card */}
-          <div className="card map-card">
-            <div className="card-header">
-              <h3 className="card-title">Autonomous Map</h3>
-              <span className="badge">4 BOTS ACTIVE</span>
-            </div>
-            <div 
-              className="map-container"
-              onClick={() => setIsMapOpen(true)}
-              style={{ cursor: 'pointer', position: 'relative' }}
-            >
-              <div className="map-grid" />
-              <div className="map-halftone" />
-              
-              {/* Sample Bots */}
-              <div className="bot bot-main" />
-              <div className="bot bot-warning" />
-              <div className="bot bot-idle" />
-
-              {/* Hover Overlay */}
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'rgba(0,0,0,0.5)',
-                opacity: 0,
-                transition: 'opacity 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={(e) => e.currentTarget.style.opacity = '0'}
-              >
-                <div style={{
-                  background: 'rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(4px)',
-                  padding: '0.75rem 1.5rem',
-                  border: '2px solid #6b6b6b',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  color: '#f5f5f5',
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  fontSize: '0.75rem'
-                }}>
-                  <Maximize2 size={16} />
-                  <span>Click to expand</span>
-                </div>
-              </div>
-
-              <div className="status-card">
-                <div className="status-header">
-                  <Navigation size={12} />
-                  <span>Bot #9220 moving south</span>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress-fill" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ETA Card */}
-          <div className="card eta-card eta-side">
-            <div className="eta-header">
-              <div className="eta-icon">
-                <Clock size={14} />
-              </div>
-              <div>
-                <div className="eta-label">Estimated Time</div>
-                <div className="eta-value">8-12 MIN</div>
-              </div>
-            </div>
-            <p className="eta-note" style={{ color: 'rgba(255,255,255,0.7)' }}>
-              Your order is prioritized through the optimal hub for thermal retention.
-            </p>
-          </div>
-        </div>
-      </div>
-
+    
+    <div style={{background: '#f5f5f5' }}>
+      
+                          
       {/* Full Screen Map Popup */}
-      {isMapOpen && (
+      {(isMapOpen) && (
         <div style={{
           position: 'fixed',
           inset: 0,
@@ -207,7 +131,7 @@ export default function MapComponent() {
                 </p>
               </div>
               <button
-                onClick={() => setIsMapOpen(false)}
+                onClick={() => onClose ? onClose() : setIsMapOpen(false)}
                 style={{
                   width: '40px',
                   height: '40px',
