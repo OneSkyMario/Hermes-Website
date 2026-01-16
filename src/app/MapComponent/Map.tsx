@@ -1,7 +1,5 @@
-import '@/app/coffee/[id]/page.css';
-
-import { useState } from 'react';
-import { X, Navigation, MapPin, Package, User, ChevronUp, ChevronDown, Maximize2, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Navigation, MapPin, Package, User, ChevronUp, ChevronDown, MessageSquare, Building2 } from 'lucide-react';
 
 interface Point {
   id: number;
@@ -32,33 +30,27 @@ export default function MapComponent({ initialOpen = false, onClose }: MapCompon
   const [currentFloor, setCurrentFloor] = useState(1);
   const [selectedPoint, setSelectedPoint] = useState<Point | null>(null);
 
+  // New state for delivery inputs
+  const [deliveryInfo, setDeliveryInfo] = useState({
+    block: '',
+    floor: '',
+    commentary: ''
+  });
+
   const floors: Floors = {
-    1: {
-      name: "Ground Floor",
-      points: [
-        { id: 1, x: 20, y: 30, type: "bot", label: "Bot #9220", status: "active", image: "https://via.placeholder.com/100x100/4ade80/ffffff?text=BOT" },
-        { id: 2, x: 60, y: 50, type: "pickup", label: "Pickup Zone A", status: "idle", image: "https://via.placeholder.com/100x100/9ca3af/ffffff?text=PICKUP" },
-        { id: 3, x: 80, y: 70, type: "delivery", label: "Delivery Point", status: "complete", image: "https://via.placeholder.com/100x100/3b82f6/ffffff?text=DELIVERY" },
-      ]
-    },
-    2: {
-      name: "First Floor",
-      points: [
-        { id: 4, x: 40, y: 40, type: "bot", label: "Bot #9221", status: "warning", image: "https://via.placeholder.com/100x100/eab308/ffffff?text=BOT" },
-        { id: 5, x: 70, y: 60, type: "user", label: "Customer Location", status: "active", image: "https://via.placeholder.com/100x100/4ade80/ffffff?text=USER" },
-        { id: 6, x: 30, y: 70, type: "pickup", label: "Pickup Zone B", status: "idle", image: "https://via.placeholder.com/100x100/9ca3af/ffffff?text=PICKUP" },
-      ]
-    },
-    3: {
-      name: "Second Floor",
-      points: [
-        { id: 7, x: 50, y: 50, type: "bot", label: "Bot #9222", status: "idle", image: "https://via.placeholder.com/100x100/9ca3af/ffffff?text=BOT" },
-        { id: 8, x: 65, y: 35, type: "delivery", label: "Office 301", status: "active", image: "https://via.placeholder.com/100x100/4ade80/ffffff?text=OFFICE" },
-      ]
-    }
+    1: { name: "Ground Floor", points: [
+      { id: 1, x: 20, y: 30, type: "bot", label: "Bot #9220", status: "active", image: "https://via.placeholder.com/100x100/4ade80/ffffff?text=BOT" },
+      { id: 2, x: 60, y: 50, type: "pickup", label: "Pickup Zone A", status: "idle", image: "https://via.placeholder.com/100x100/9ca3af/ffffff?text=PICKUP" },
+    ]},
+    2: { name: "First Floor", points: [
+      { id: 4, x: 40, y: 40, type: "bot", label: "Bot #9221", status: "warning", image: "https://via.placeholder.com/100x100/eab308/ffffff?text=BOT" },
+    ]},
+    3: { name: "Second Floor", points: [
+      { id: 7, x: 50, y: 50, type: "bot", label: "Bot #9222", status: "idle", image: "https://via.placeholder.com/100x100/9ca3af/ffffff?text=BOT" },
+    ]}
   };
 
-  const getPointColor = (status: string): string => {
+  const getPointColor = (status: string) => {
     switch(status) {
       case "active": return "#4ade80";
       case "warning": return "#eab308";
@@ -68,384 +60,169 @@ export default function MapComponent({ initialOpen = false, onClose }: MapCompon
     }
   };
 
-  const getPointIcon = (type: string) => {
-    switch(type) {
-      case "bot": return <Navigation size={16} />;
-      case "pickup": return <Package size={16} />;
-      case "delivery": return <MapPin size={16} />;
-      case "user": return <User size={16} />;
-      default: return null;
-    }
-  };
+  if (!isMapOpen) return null;
 
   return (
-    
-    <div style={{background: '#f5f5f5' }}>
-      
-                          
-      {/* Full Screen Map Popup */}
-      {(isMapOpen) && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.9)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '1rem'
-        }}>
-          <div style={{
-            background: '#f5f5f5',
-            border: '3px solid #6b6b6b',
-            width: '100%',
-            maxWidth: '1400px',
-            height: '90vh',
-            display: 'flex',
-            flexDirection: 'column',
-            boxShadow: '8px 8px 0 rgba(107, 107, 107, 0.5)'
-          }}>
-            {/* Header */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: '1.5rem',
-              borderBottom: '3px solid #6b6b6b',
-              background: '#f5f5f5'
-            }}>
-              <div>
-                <h2 style={{
-                  fontSize: '1.75rem',
-                  fontWeight: 'bold',
-                  color: '#4a4a4a',
-                  textTransform: 'uppercase',
-                  letterSpacing: '2px',
-                  marginBottom: '0.25rem'
-                }}>
-                  Multi-Floor Navigation
-                </h2>
-                <p style={{ color: '#7a7a7a', fontSize: '0.875rem' }}>
-                  Floor {currentFloor} - {floors[currentFloor].name}
-                </p>
-              </div>
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+      {/* Main Container */}
+      <div className="bg-[#f5f5f5] border-[3px] border-[#6b6b6b] w-full max-w-[1400px] h-[90vh] flex flex-col shadow-[8px_8px_0_rgba(107,107,107,0.5)] overflow-hidden">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b-[3px] border-[#6b6b6b] bg-[#f5f5f5]">
+          <div>
+            <h2 className="text-2xl font-black text-[#4a4a4a] uppercase tracking-tighter italic">
+              Multi-Floor Navigation
+            </h2>
+            <p className="text-[#7a7a7a] text-xs font-bold uppercase">
+              Floor {currentFloor} — {floors[currentFloor].name}
+            </p>
+          </div>
+          <button
+            onClick={() => onClose ? onClose() : setIsMapOpen(false)}
+            className="w-10 h-10 border-2 border-[#6b6b6b] flex items-center justify-center hover:bg-[#6b6b6b] hover:text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="flex flex-1 overflow-hidden">
+          {/* Left: Floor Selector */}
+          <div className="w-20 bg-[#e5e5e5] border-r-[3px] border-[#6b6b6b] flex flex-col items-center py-6 gap-4">
+            <button 
+              onClick={() => setCurrentFloor(Math.min(3, currentFloor + 1))}
+              className="p-2 border-2 border-[#6b6b6b] disabled:opacity-30"
+              disabled={currentFloor === 3}
+            >
+              <ChevronUp size={24} />
+            </button>
+            
+            {[3, 2, 1].map((f) => (
               <button
-                onClick={() => onClose ? onClose() : setIsMapOpen(false)}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  border: '2px solid #6b6b6b',
-                  background: '#f5f5f5',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#4a4a4a'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#6b6b6b';
-                  e.currentTarget.style.color = '#f5f5f5';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#f5f5f5';
-                  e.currentTarget.style.color = '#4a4a4a';
-                }}
+                key={f}
+                onClick={() => setCurrentFloor(f)}
+                className={`w-12 h-12 border-2 border-[#6b6b6b] font-black transition-all ${
+                  currentFloor === f ? 'bg-[#6b6b6b] text-white scale-110 shadow-[3px_3px_0_rgba(0,0,0,0.2)]' : 'bg-white'
+                }`}
               >
-                <X size={24} />
+                {f}
               </button>
-            </div>
+            ))}
 
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-              {/* Floor Selector */}
-              <div style={{
-                width: '80px',
-                background: '#e5e5e5',
-                borderRight: '3px solid #6b6b6b',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                padding: '1.5rem 0',
-                gap: '1rem'
-              }}>
-                <button
-                  onClick={() => setCurrentFloor(Math.min(3, currentFloor + 1))}
-                  disabled={currentFloor === 3}
-                  style={{
-                    padding: '0.75rem',
-                    border: '2px solid #6b6b6b',
-                    background: currentFloor === 3 ? '#e5e5e5' : '#f5f5f5',
-                    cursor: currentFloor === 3 ? 'not-allowed' : 'pointer',
-                    opacity: currentFloor === 3 ? 0.3 : 1,
-                    color: '#4a4a4a'
-                  }}
+            <button 
+              onClick={() => setCurrentFloor(Math.max(1, currentFloor - 1))}
+              className="p-2 border-2 border-[#6b6b6b] disabled:opacity-30"
+              disabled={currentFloor === 1}
+            >
+              <ChevronDown size={24} />
+            </button>
+          </div>
+
+          {/* Center: Map Area */}
+          <div className="flex-1 relative bg-[#e5e5e5] overflow-hidden">
+            {/* Grid Pattern */}
+            <div 
+              className="absolute inset-0 opacity-10"
+              style={{ backgroundImage: 'linear-gradient(#6b6b6b 1px, transparent 1px), linear-gradient(90deg, #6b6b6b 1px, transparent 1px)', backgroundSize: '30px 30px' }}
+            />
+
+            {floors[currentFloor].points.map((point) => (
+              <div
+                key={point.id}
+                className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group"
+                style={{ left: `${point.x}%`, top: `${point.y}%` }}
+                onClick={() => setSelectedPoint(point)}
+              >
+                <div 
+                  className="w-16 h-16 border-[3px] bg-white relative shadow-[4px_4px_0_rgba(0,0,0,0.1)] transition-transform group-hover:scale-105"
+                  style={{ borderColor: getPointColor(point.status) }}
                 >
-                  <ChevronUp size={24} />
-                </button>
-
-                {[3, 2, 1].map((floor) => (
-                  <button
-                    key={floor}
-                    onClick={() => setCurrentFloor(floor)}
-                    style={{
-                      width: '56px',
-                      height: '56px',
-                      border: '2px solid #6b6b6b',
-                      background: currentFloor === floor ? '#6b6b6b' : '#f5f5f5',
-                      color: currentFloor === floor ? '#f5f5f5' : '#4a4a4a',
-                      fontWeight: 'bold',
-                      fontSize: '1.25rem',
-                      cursor: 'pointer',
-                      boxShadow: currentFloor === floor ? '3px 3px 0 rgba(74, 74, 74, 0.5)' : 'none',
-                      transform: currentFloor === floor ? 'scale(1.1)' : 'scale(1)'
-                    }}
-                  >
-                    {floor}
-                  </button>
-                ))}
-
-                <button
-                  onClick={() => setCurrentFloor(Math.max(1, currentFloor - 1))}
-                  disabled={currentFloor === 1}
-                  style={{
-                    padding: '0.75rem',
-                    border: '2px solid #6b6b6b',
-                    background: currentFloor === 1 ? '#e5e5e5' : '#f5f5f5',
-                    cursor: currentFloor === 1 ? 'not-allowed' : 'pointer',
-                    opacity: currentFloor === 1 ? 0.3 : 1,
-                    color: '#4a4a4a'
-                  }}
-                >
-                  <ChevronDown size={24} />
-                </button>
-              </div>
-
-              {/* Map Area */}
-              <div style={{ flex: 1, position: 'relative', background: 'linear-gradient(135deg, #e5e5e5, #f5f5f5)' }}>
-                {/* Grid Pattern */}
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0.15,
-                  backgroundImage: 'linear-gradient(#6b6b6b 1px, transparent 1px), linear-gradient(90deg, #6b6b6b 1px, transparent 1px)',
-                  backgroundSize: '30px 30px'
-                }} />
-
-                {/* Halftone Effect */}
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0.08,
-                  background: 'radial-gradient(circle, #4a4a4a 0%, transparent 70%)',
-                  pointerEvents: 'none'
-                }} />
-
-                {/* Points with Images */}
-                {floors[currentFloor].points.map((point) => (
-                  <div
-                    key={point.id}
-                    style={{ 
-                      position: 'absolute',
-                      left: `${point.x}%`, 
-                      top: `${point.y}%`,
-                      transform: 'translate(-50%, -50%)',
-                      cursor: 'pointer'
-                    }}
-                    onClick={() => setSelectedPoint(point)}
-                  >
-                    {/* Image Container */}
-                    <div style={{
-                      width: '80px',
-                      height: '80px',
-                      border: '3px solid ' + getPointColor(point.status),
-                      boxShadow: `0 0 0 6px rgba(107, 107, 107, 0.3), 4px 4px 0 ${getPointColor(point.status)}`,
-                      background: '#f5f5f5',
-                      position: 'relative',
-                      overflow: 'hidden'
-                    }}>
-                      {/* Placeholder Image */}
-                      <img 
-                        src={point.image} 
-                        alt={point.label}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                      
-                      {/* Status Indicator */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '4px',
-                        right: '4px',
-                        width: '12px',
-                        height: '12px',
-                        background: getPointColor(point.status),
-                        border: '2px solid #f5f5f5',
-                        animation: point.status === 'active' ? 'pulse 2s infinite' : 'none'
-                      }} />
-                    </div>
-
-                    {/* Label on Hover */}
-                    <div style={{
-                      position: 'absolute',
-                      top: 'calc(100% + 8px)',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      background: '#6b6b6b',
-                      color: '#f5f5f5',
-                      padding: '0.5rem 0.75rem',
-                      border: '2px solid #4a4a4a',
-                      whiteSpace: 'nowrap',
-                      fontSize: '0.75rem',
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase',
-                      boxShadow: '3px 3px 0 rgba(74, 74, 74, 0.5)',
-                      opacity: 0,
-                      pointerEvents: 'none',
-                      transition: 'opacity 0.2s'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                    >
-                      {point.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Info Panel */}
-              <div style={{
-                width: '320px',
-                background: '#e5e5e5',
-                borderLeft: '3px solid #6b6b6b',
-                padding: '1.5rem',
-                overflowY: 'auto'
-              }}>
-                <h3 style={{
-                  fontSize: '1rem',
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  color: '#4a4a4a',
-                  marginBottom: '1rem'
-                }}>
-                  Active Points
-                </h3>
-                
-                {selectedPoint ? (
-                  <div style={{
-                    background: '#f5f5f5',
-                    border: '2px solid #6b6b6b',
-                    padding: '1rem',
-                    marginBottom: '1rem',
-                    boxShadow: '3px 3px 0 rgba(107, 107, 107, 0.3)'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '1rem' }}>
-                      <img 
-                        src={selectedPoint.image} 
-                        alt={selectedPoint.label}
-                        style={{ 
-                          width: '60px', 
-                          height: '60px', 
-                          objectFit: 'cover',
-                          border: '2px solid #6b6b6b'
-                        }}
-                      />
-                      <div style={{ flex: 1 }}>
-                        <h4 style={{ 
-                          color: '#4a4a4a', 
-                          fontWeight: 'bold', 
-                          fontSize: '0.875rem',
-                          marginBottom: '0.25rem',
-                          textTransform: 'uppercase'
-                        }}>
-                          {selectedPoint.label}
-                        </h4>
-                        <p style={{ 
-                          color: '#7a7a7a', 
-                          fontSize: '0.75rem',
-                          textTransform: 'uppercase'
-                        }}>
-                          {selectedPoint.status}
-                        </p>
-                      </div>
-                    </div>
-                    <div style={{ 
-                      display: 'grid',
-                      gap: '0.5rem',
-                      fontSize: '0.75rem',
-                      borderTop: '2px solid #e5e5e5',
-                      paddingTop: '0.75rem'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#7a7a7a' }}>Floor:</span>
-                        <span style={{ color: '#4a4a4a', fontWeight: 'bold' }}>{currentFloor}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <span style={{ color: '#7a7a7a' }}>Type:</span>
-                        <span style={{ color: '#4a4a4a', fontWeight: 'bold', textTransform: 'uppercase' }}>{selectedPoint.type}</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div style={{
-                    background: '#f5f5f5',
-                    border: '2px solid #6b6b6b',
-                    padding: '2rem 1rem',
-                    textAlign: 'center',
-                    color: '#7a7a7a',
-                    marginBottom: '1rem'
-                  }}>
-                    <MapPin size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.5 }} />
-                    <p style={{ fontSize: '0.75rem' }}>Click on a point to view details</p>
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {floors[currentFloor].points.map((point) => (
-                    <button
-                      key={point.id}
-                      onClick={() => setSelectedPoint(point)}
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem',
-                        border: selectedPoint?.id === point.id ? '3px solid #4a4a4a' : '2px solid #6b6b6b',
-                        background: selectedPoint?.id === point.id ? '#6b6b6b' : '#f5f5f5',
-                        color: selectedPoint?.id === point.id ? '#f5f5f5' : '#4a4a4a',
-                        cursor: 'pointer',
-                        textAlign: 'left',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.75rem',
-                        boxShadow: selectedPoint?.id === point.id ? '3px 3px 0 rgba(74, 74, 74, 0.5)' : 'none'
-                      }}
-                    >
-                      <div style={{
-                        width: '8px',
-                        height: '8px',
-                        background: getPointColor(point.status),
-                        border: '2px solid ' + (selectedPoint?.id === point.id ? '#f5f5f5' : '#6b6b6b'),
-                        flexShrink: 0
-                      }} />
-                      <span style={{ 
-                        fontSize: '0.75rem', 
-                        fontWeight: 'bold',
-                        textTransform: 'uppercase'
-                      }}>
-                        {point.label}
-                      </span>
-                    </button>
-                  ))}
+                  <img src={point.image} alt={point.label} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" />
+                  <div 
+                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white animate-pulse"
+                    style={{ background: getPointColor(point.status) }}
+                  />
+                </div>
+                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-[#4a4a4a] text-white text-[10px] px-2 py-0.5 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity uppercase font-bold">
+                  {point.label}
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Right: Info & Input Panel */}
+          <div className="w-80 bg-[#e5e5e5] border-l-[3px] border-[#6b6b6b] flex flex-col">
+            
+            {/* Top: System Intel */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              <h3 className="text-sm font-black uppercase tracking-widest text-[#4a4a4a] mb-4 flex items-center gap-2">
+                <Navigation size={16} /> System Intel
+              </h3>
+              
+              {selectedPoint ? (
+                <div className="bg-white border-2 border-[#6b6b6b] p-4 shadow-[4px_4px_0_rgba(0,0,0,0.1)]">
+                  <h4 className="font-black uppercase text-sm mb-2">{selectedPoint.label}</h4>
+                  <div className="space-y-2 text-xs font-bold uppercase text-gray-500">
+                    <p>Status: <span style={{ color: getPointColor(selectedPoint.status)}}>{selectedPoint.status}</span></p>
+                    <p>Type: {selectedPoint.type}</p>
+                    <p>Coord: {selectedPoint.x}, {selectedPoint.y}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-[#6b6b6b] p-8 text-center text-gray-400">
+                  <p className="text-[10px] font-black uppercase">Select Node for Uplink</p>
+                </div>
+              )}
             </div>
+
+            {/* Bottom: Delivery Input Section */}
+            <div className="p-6 border-t-[3px] border-[#6b6b6b] bg-[#f5f5f5]">
+              <h3 className="text-sm font-black uppercase tracking-widest text-[#4a4a4a] mb-4 flex items-center gap-2">
+                <MapPin size={16} /> Delivery Address
+              </h3>
+              
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-500">Block</label>
+                    <input 
+                      type="text"
+                      className="w-full bg-white border-2 border-[#6b6b6b] p-2 text-xs font-bold focus:outline-none focus:bg-[#e5e5e5]"
+                      placeholder="E.g. A"
+                      value={deliveryInfo.block}
+                      onChange={(e) => setDeliveryInfo({...deliveryInfo, block: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black uppercase text-gray-500">Floor</label>
+                    <input 
+                      type="number"
+                      className="w-full bg-white border-2 border-[#6b6b6b] p-2 text-xs font-bold focus:outline-none focus:bg-[#e5e5e5]"
+                      placeholder="1-3"
+                      value={deliveryInfo.floor}
+                      onChange={(e) => setDeliveryInfo({...deliveryInfo, floor: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase text-gray-500">Commentary</label>
+                  <textarea 
+                    className="w-full bg-white border-2 border-[#6b6b6b] p-2 text-xs font-bold focus:outline-none focus:bg-[#e5e5e5] h-20 resize-none"
+                    placeholder="Enter delivery notes..."
+                    value={deliveryInfo.commentary}
+                    onChange={(e) => setDeliveryInfo({...deliveryInfo, commentary: e.target.value})}
+                  />
+                </div>
+
+                <button className="w-full bg-[#6b6b6b] text-white py-3 font-black uppercase text-xs tracking-widest hover:bg-black transition-colors shadow-[4px_4px_0_rgba(107,107,107,0.3)]">
+                  Set Destination
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
-      )}
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-      `}</style>
+      </div>
     </div>
   );
 }
