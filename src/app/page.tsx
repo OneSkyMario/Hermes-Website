@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Coffee, LogOut, User } from 'lucide-react';
+import { Coffee, LogOut, Star, User, ArrowRight } from 'lucide-react';
 import { usePathname } from 'next/navigation'; // Optional: for active link highlighting
 import './navbar.css'
 import './page.css';
@@ -14,7 +14,31 @@ import { useAuth } from '@/app/context/AuthContext';
 import AuthModal from './registration/page';
 import { useShop } from './context/ShopContext';
 
+
+export const recommendations = [
+  {
+    id: 'r1',
+    name: 'Caramel Macchiato',
+    description: 'Espresso with steamed milk and industrial-grade caramel drizzle.',
+    category: 'BEVERAGE',
+    powerLevel: '85%',
+    thermalRating: 'HOT',
+    image: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?q=80&w=800&auto=format&fit=crop'
+  },
+  {
+    id: 'r2',
+    name: 'Margherita Pizza',
+    description: 'Standardized pizza unit with fresh basil and mozzarella fusion.',
+    category: 'MAIN_MEAL',
+    powerLevel: '92%',
+    thermalRating: 'WARM',
+    image: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=800&auto=format&fit=crop'
+  }
+  // Add as many as you need...
+];
+
 export default function Homepage() {
+  
 // 1. All Refs
   const navbarRef = useRef<HTMLElement>(null);
   const robotRef = useRef<HTMLImageElement>(null);
@@ -201,21 +225,43 @@ export default function Homepage() {
 
       <main>
         <section id="recommendation" className="info-section">
-          <div className="section-header">
-            <h2>Today's Recommendation</h2>
+        <div className="section-header">
+          <div className="flex items-center gap-4">
+            <h2>Recommendations</h2>
           </div>
-          <div className="halftone-line"></div>
-          <div className="sketch-container">
-            <div className="sketch-item">
-              <h3>Caramel Macchiato</h3>
-              <p>Espresso with steamed milk and caramel drizzle.</p>
+        </div>
+        
+        <div className="halftone-line"></div>
+
+        <div className="sketch-container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          {recommendations.map((item) => (
+            <div 
+              key={item.id} 
+              className="sketch-item"
+              onClick={() => {
+                // Logic to route correctly:
+                const path = item.category === 'BEVERAGE' ? 'coffee' : 'mainMeal';
+                // Using item.id.replace('r', '') to get just the number if needed
+                router.push(`/${path}/${item.id.replace('r', '')}`);
+              }}
+              style={{ cursor: 'pointer', border: '2px solid #6b6b6b', padding: '1rem' }}
+            >
+              <div className="section-header-tag" style={{ fontSize: '0.6rem', marginBottom: '0.5rem' }}>
+                {item.category} // POWER: {item.powerLevel}
+              </div>
+              <h3 className="font-bold uppercase">{item.name}</h3>
+              <p className="text-sm opacity-70">{item.description}</p>
+              
+              <div className="mt-4 flex justify-between items-center">
+                <span className="font-mono text-xs bg-black text-white px-2 py-1">
+                  {item.thermalRating}
+                </span>
+                <ArrowRight size={16} />
+              </div>
             </div>
-            <div className="sketch-item">
-              <h3>Margherita Pizza</h3>
-              <p>Classic pizza with fresh tomatoes, mozzarella, and basil.</p>
-            </div>
-          </div>
-        </section>
+          ))}
+        </div>
+      </section>
 
         <section id="menu" className="info-section">
           <div className="section-header">
@@ -341,14 +387,7 @@ export default function Homepage() {
         
         </section>
 
-        <section className="cta-section">
-          <h2>Ready to Order?</h2>
-          <div className="halftone-line-gradient" style={{margin: '30px auto', maxWidth: '600px'}}></div>
-          <p>
-            Go now! We're waiting to serve you.
-          </p>
-          <a href="#contact" className="cta-button">Place Order Now</a>
-        </section>
+        
       </main>
 
       <footer>

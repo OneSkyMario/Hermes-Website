@@ -1,4 +1,4 @@
-export interface Store {
+interface Store {
   id: number;
   name: string;
   address: string;

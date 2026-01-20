@@ -1,0 +1,1589 @@
+/* File: app/coffee/[id]/page.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, 
+              opacity 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+/* Page Wrapper with Halftone Background */
+.page-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  position: relative;
+  overflow-x: hidden;
+  color: #4a4a4a;
+  padding: 0.5rem; /* Tighter padding */
+}
+
+/* Halftone Background Effect */
+.page-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 0% 50%, #4a4a4a 0%, transparent 50%),
+    radial-gradient(circle at 100% 50%, #4a4a4a 0%, transparent 50%);
+  -webkit-mask-image: 
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0),
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px, 4px 4px;
+  -webkit-mask-position: 0 0, 2px 2px;
+  mask-image: 
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0),
+    radial-gradient(circle 1.5px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px, 4px 4px;
+  mask-position: 0 0, 2px 2px;
+  opacity: 0.08;
+}
+
+.container {
+  width: 100%;
+  max-width: 1400px;
+  background: #f5f5f5;
+  border-radius: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+  border: 2px solid #6b6b6b;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px; /* Smaller radius for more space */
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 3px solid #6b6b6b;
+  background: #f5f5f5;
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #6b6b6b;
+  -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px;
+  mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px;
+  opacity: 0.6;
+}
+
+.header > * {
+  position: relative;
+  z-index: 1;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #6b6b6b;
+  background: #f5f5f5;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a4a4a;
+}
+
+.back-btn:hover {
+  background: #6b6b6b;
+  color: #f5f5f5;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #4a4a4a;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #5a5a5a;
+  text-transform: uppercase;
+}
+
+.nav-btn.active {
+  background: #6b6b6b;
+  color: #f5f5f5;
+}
+
+.nav-btn:not(.active):hover {
+  background: #6b6b6b;
+  color: #f5f5f5;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #6b6b6b;
+  border: 2px solid #6b6b6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5f5f5;
+}
+
+.user-details {
+  text-align: left;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: #7a7a7a;
+}
+
+/* Main Content */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f5f5f5;
+  flex: 1;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  overflow: hidden; /* Content inside handles its own scroll if needed */
+}
+
+/* Left Column */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.info-section, .view-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 0; /* Important for flex children to shrink */
+}
+
+.coffee-title {
+font-size: 2.2rem; 
+  font-weight: bold;
+  color: #4a4a4a;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.coffee-subtitle {
+  font-size: 1.125rem;
+  color: #7a7a7a;
+}
+
+.price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.info-card {
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  padding: 1rem;
+  position: relative;
+  box-shadow: 3px 3px 0 rgba(107, 107, 107, 0.3);
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 10% 50%, #6b6b6b 0%, transparent 60%);
+  -webkit-mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  -webkit-mask-size: 4px 4px;
+  mask-image: radial-gradient(circle 1px at 2px 2px, #000 100%, transparent 0);
+  mask-size: 4px 4px;
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: #4a4a4a;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Right Column */
+.view-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0.75rem;
+}
+
+.view-toggles {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.view-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  background: #f5f5f5;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a4a4a;
+  text-transform: uppercase;
+}
+
+.view-btn.active {
+  background: #6b6b6b;
+  color: #f5f5f5;
+  box-shadow: 3px 3px 0 rgba(107, 107, 107, 0.3);
+}
+
+.view-btn:hover {
+  background: #6b6b6b;
+  color: #f5f5f5;
+}
+
+.coffee-display {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 0;
+  border: 3px solid #6b6b6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 5px 5px 0 rgba(107, 107, 107, 0.5);
+  overflow: hidden;
+  flex: 1; /* Grows to fill space */
+  aspect-ratio: auto; /* Allow it to be non-square to fit */
+  min-height: 150px;
+}
+
+.coffee-display::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, #f5f5f5 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle 1.5px at 3px 3px, #000 100%, transparent 0);
+  -webkit-mask-size: 6px 6px;
+  mask-image: radial-gradient(circle 1.5px at 3px 3px, #000 100%, transparent 0);
+  mask-size: 6px 6px;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.coffee-icon-large {
+  position: relative;
+  z-index: 10;
+  width: 140px; 
+  height: 140px;
+  color: #4a4a4a;
+}
+
+.floating-info {
+  position: absolute;
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  padding: 0.75rem;
+  box-shadow: 3px 3px 0 rgba(107, 107, 107, 0.3);
+  z-index: 10;
+}
+
+.floating-info.top-right {
+  top: 1rem;
+  right: 1rem;
+}
+
+.floating-info.bottom-left {
+  bottom: 1rem;
+  left: 1rem;
+}
+
+.floating-label {
+  font-size: 0.75rem;
+  color: #7a7a7a;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+}
+
+.floating-value {
+  font-weight: bold;
+  color: #4a4a4a;
+}
+
+.order-card {
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  padding: 1.5rem;
+  box-shadow: 3px 3px 0 rgba(107, 107, 107, 0.3);
+}
+
+.order-title {
+  font-size: 1.125rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+  color: #4a4a4a;
+  text-transform: uppercase;
+}
+
+.order-description {
+  font-size: 0.875rem;
+  color: #7a7a7a;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.order-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  background: #6b6b6b;
+  color: #f5f5f5;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.order-btn:hover {
+  background: #4a4a4a;
+  border-color: #4a4a4a;
+  transform: scale(1.05);
+}
+
+/* Store Section */
+/* Store Section - NEW DROPDOWN STYLE */
+.store-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  position: relative;
+}
+
+.store-section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #4a4a4a;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Dropdown Container */
+.store-dropdown-container {
+  position: relative;
+}
+
+/* Main Dropdown Button */
+.store-dropdown-btn {
+  width: 100%;
+  background: #6b6b6b;
+  color: #f5f5f5;
+  border: 2px solid #4a4a4a;
+  border-radius: 0;
+  padding: 1rem;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 4px 4px 0 rgba(74, 74, 74, 0.5);
+  transition: all 0.2s;
+}
+
+.store-dropdown-btn:hover {
+  background: #4a4a4a;
+}
+
+.store-dropdown-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.store-dropdown-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.store-dropdown-details {
+  flex: 1;
+}
+
+.store-dropdown-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #fbbf24;
+  margin-bottom: 0.25rem;
+}
+
+.store-dropdown-name {
+  font-size: 0.95rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.store-dropdown-address {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.store-dropdown-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.store-dropdown-stats {
+  text-align: right;
+}
+
+.store-dropdown-speed {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.store-dropdown-rating {
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.store-dropdown-chevron {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s;
+}
+
+.store-dropdown-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.store-dropdown-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 rgba(107, 107, 107, 0.5);
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+  scroll-behavior: smooth; /* Smooth scrolling animation */
+  -webkit-overflow-scrolling: touch; /* Improves scrolling on iOS */
+  scroll-snap-type: x mandatory; /* Ensures items snap into place */ 
+
+}
+/* For the dropdown menu container */
+.store-dropdown-menu::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+  display: none;  
+}
+
+/* For the scrollable list inside */
+.store-dropdown-list::-webkit-scrollbar {
+  width: 0px;
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.store-dropdown-menu-header {
+  padding: 1rem;
+  background: white;
+  border-bottom: 2px solid #6b6b6b;
+}
+
+.store-dropdown-menu-title {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #7a7a7a;
+}
+
+.store-dropdown-list {
+  max-height: 320px;
+  overflow-y: auto;
+    z-index: 1000;
+   /* Hide scrollbar for Chrome, Safari and Opera */
+  -webkit-scrollbar-width: none;
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Individual Store Item */
+.store-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: none;
+  border-bottom: 2px solid #e5e5e5;
+  background: #f5f5f5;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.store-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.store-dropdown-item:hover {
+  background: white;
+}
+
+.store-dropdown-item.active {
+  background: #6b6b6b;
+  color: #f5f5f5;
+  box-shadow: 3px 3px 0 rgba(74, 74, 74, 0.3) inset;
+}
+
+.store-dropdown-item-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.store-dropdown-item-icon {
+  width: 48px;
+  height: 48px;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e5e5;
+  color: #4a4a4a;
+}
+
+.store-dropdown-item.active .store-dropdown-item-icon {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #f5f5f5;
+}
+
+.store-dropdown-item-info {
+  flex: 1;
+}
+
+.store-dropdown-item-tag {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #f97316;
+  margin-bottom: 0.25rem;
+}
+
+.store-dropdown-item.active .store-dropdown-item-tag {
+  color: #fbbf24;
+}
+
+.store-dropdown-item-name {
+  font-size: 0.875rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+.store-dropdown-item-address {
+  font-size: 0.75rem;
+  color: #7a7a7a;
+}
+
+.store-dropdown-item.active .store-dropdown-item-address {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.store-dropdown-item-right {
+  text-align: right;
+}
+
+.store-dropdown-item-rating {
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.store-dropdown-item-speed {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #7a7a7a;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.store-dropdown-item.active .store-dropdown-item-speed {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.store-dropdown-item-distance {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.store-dropdown-item.active .store-dropdown-item-distance {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Selected Store Info (kept from original but updated style) */
+.selected-store-info {
+  background: #6b6b6b;
+  color: #f5f5f5;
+  padding: 0.75rem 1rem;
+  border-radius: 0;
+  margin-top: 0.5rem;
+  border: 2px solid #4a4a4a;
+  box-shadow: 3px 3px 0 rgba(74, 74, 74, 0.5);
+}
+
+.selected-store-label {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.selected-store-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Coffee Selection */
+.coffee-selection {
+  flex-shrink: 0;
+  padding: 0.5rem 1.5rem;
+  border-top: 3px solid #6b6b6b;
+}
+
+.coffee-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem 0.5rem 1rem;
+  margin: -0.5rem;
+     /* Hide scrollbar for Chrome, Safari and Opera */
+  -webkit-scrollbar-width: none;
+  
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.coffee-scroll::-webkit-scrollbar {
+  height: 0px;
+}
+
+.coffee-scroll::-webkit-scrollbar-track {
+  background: #e5e5e5;
+  border-radius: 0;
+}
+
+.coffee-scroll::-webkit-scrollbar-thumb {
+  background: #6b6b6b;
+  border-radius: 0;
+}
+
+.coffee-card {
+  flex-shrink: 0;
+  width: 130px;
+  padding: 0.5rem;
+  border: 2px solid #6b6b6b;
+  border-radius: 0;
+  background: #f5f5f5;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 2px 2px 0 rgba(107, 107, 107, 0.2);
+  position: relative;
+  margin: 5px;
+}
+
+.coffee-card:hover {
+  background: #f5f5f5;
+  box-shadow: 4px 4px 0 rgba(107, 107, 107, 0.4);
+  transform: translateY(-3px);
+  z-index: 10;
+}
+
+.coffee-card.active {
+  background: #f5f5f5;
+  border-color: #4a4a4a;
+  border-width: 3px;
+  box-shadow: 5px 5px 0 rgba(74, 74, 74, 0.5);
+  transform: translateY(-3px) scale(1.02);
+  z-index: 10;
+}
+
+.coffee-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #6b6b6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+  color: #4a4a4a;
+}
+
+.coffee-card-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #4a4a4a;
+}
+
+.coffee-card-price {
+  font-size: 0.75rem;
+  color: #7a7a7a;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+
+  .nav {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .coffee-title {
+    font-size: 2rem;
+    letter-spacing: 1px;
+  }
+
+  .price {
+    font-size: 2rem;
+  }
+
+  .user-details {
+    display: none;
+  }
+
+  .page-wrapper {
+    padding: 0.5rem;
+  }
+
+  .container {
+    border-radius: 0;
+    border-width: 1px;
+  }
+
+  .main-content {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .coffee-icon-large {
+    width: 150px;
+    height: 150px;
+  }
+
+  .header {
+    padding: 1rem;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+}
+
+/* iPhone 15 Pro Optimization (393px x 852px) */
+@media (max-width: 430px) {
+  .page-wrapper {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .container {
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid #6b6b6b;
+    max-width: 100%;
+  }
+
+  /* Header optimized for iPhone */
+  .header {
+    padding: 0.75rem 1rem;
+    border-bottom: 2px solid #6b6b6b;
+  }
+
+  .back-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logo {
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+  }
+
+  .logo svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Main content for iPhone */
+  .main-content {
+    padding: 1rem 0.75rem;
+    gap: 1.25rem;
+    grid-template-columns: 1fr;
+  }
+
+  /* Coffee title section */
+  .coffee-title {
+    font-size: 1.75rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.25rem;
+  }
+
+  .coffee-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .price {
+    font-size: 1.75rem;
+  }
+
+  /* Info cards grid */
+  .specs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .info-card {
+    padding: 0.75rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 rgba(107, 107, 107, 0.3);
+  }
+
+  .info-card-header {
+    margin-bottom: 0.35rem;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Coffee display for iPhone */
+  .coffee-display {
+    aspect-ratio: 1;
+    border-width: 2px;
+    box-shadow: 3px 3px 0 rgba(107, 107, 107, 0.5);
+  }
+
+  .coffee-icon-large {
+    width: 140px;
+    height: 140px;
+  }
+
+  .floating-info {
+    padding: 0.5rem 0.65rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 rgba(107, 107, 107, 0.3);
+  }
+
+  .floating-info.top-right {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .floating-info.bottom-left {
+    bottom: 0.75rem;
+    left: 0.75rem;
+  }
+
+  .floating-label {
+    font-size: 0.7rem;
+  }
+
+  .floating-value {
+    font-size: 0.9rem;
+  }
+
+  /* View toggles */
+  .view-toggles {
+    gap: 0.75rem;
+  }
+
+  .view-btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.8rem;
+  }
+
+  .view-btn .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Order card */
+  .order-card {
+    padding: 1rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 rgba(107, 107, 107, 0.3);
+  }
+
+  .order-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .order-description {
+    font-size: 0.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .order-btn {
+    padding: 0.65rem;
+    font-size: 0.9rem;
+    border-width: 2px;
+  }
+
+  /* Store section for iPhone */
+  .store-section {
+    gap: 0.75rem;
+  }
+
+  .store-section-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .store-list {
+    gap: 0.65rem;
+  }
+
+  .store-card {
+    padding: 0.85rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 rgba(107, 107, 107, 0.2);
+  }
+
+  .store-card.selected {
+    border-width: 2px;
+    box-shadow: 3px 3px 0 rgba(74, 74, 74, 0.5);
+  }
+
+  .store-name {
+    font-size: 0.875rem;
+  }
+
+  .store-rating {
+    font-size: 0.8rem;
+  }
+
+  .star-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .store-address {
+    font-size: 0.75rem;
+  }
+
+  .store-distance {
+    font-size: 0.7rem;
+  }
+
+  .selected-store-info {
+    padding: 0.65rem 0.85rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 rgba(74, 74, 74, 0.5);
+  }
+
+  .selected-store-label {
+    font-size: 0.65rem;
+  }
+
+  .selected-store-name {
+    font-size: 0.875rem;
+  }
+
+  /* Coffee selection for iPhone */
+  .coffee-selection {
+    padding: 1rem 0.75rem 1.5rem;
+  }
+
+  .coffee-scroll {
+    gap: 0.75rem;
+    padding: 0.75rem 0.25rem 1rem;
+    margin: -0.25rem;
+  }
+
+  .coffee-card {
+    width: 140px;
+    padding: 0.85rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0 rgba(107, 107, 107, 0.2);
+    margin: 3px;
+  }
+
+  .coffee-card:hover {
+    box-shadow: 3px 3px 0 rgba(107, 107, 107, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .coffee-card.active {
+    border-width: 2px;
+    box-shadow: 4px 4px 0 rgba(74, 74, 74, 0.5);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .coffee-card-icon {
+    width: 42px;
+    height: 42px;
+    border-width: 2px;
+    margin-bottom: 0.65rem;
+  }
+
+  .coffee-card-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .coffee-card-name {
+    font-size: 0.8rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .coffee-card-price {
+    font-size: 0.7rem;
+  }
+}
+
+/* Layout */
+.logistics-column {
+  margin-top: 1rem; /* Reduces gap between store dropdown and logistics */
+}
+
+.logistics-row {
+  display: grid;
+  /* Gives the Map 70% width and ETA 30% width */
+  grid-template-columns: 1.5fr 1fr; 
+  gap: 1rem;
+  align-items: stretch; /* Ensures they share the same height */
+}
+
+/* Card base */
+.card {
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  padding: 0.6rem;
+  box-shadow: 2px 2px 0 rgba(107,107,107,0.3);
+  font-size: 0.65rem;
+}
+
+/* Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7a7a7a;
+}
+
+/* Badge */
+.badge {
+  background: #6b6b6b;
+  color: #f5f5f5;
+  padding: 0.15rem 0.35rem;
+  border: 1px solid #4a4a4a;
+  font-weight: 800;
+}
+
+/* Map */
+.map-container {
+  position: relative;
+  aspect-ratio: 5 / 4;
+  border: 2px solid #6b6b6b;
+  background: linear-gradient(135deg, #e5e5e5, #f5f5f5);
+  overflow: hidden;
+  position: relative;
+    flex: 1;
+}
+/* Map Card Adjustments */
+.map-card {
+  height: 140px; /* Locked height to prevent pushing footer */
+  display: flex;
+  flex-direction: column;
+}
+/* Grid */
+.map-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.15;
+  background-image:
+    linear-gradient(#6b6b6b 1px, transparent 1px),
+    linear-gradient(90deg, #6b6b6b 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Halftone */
+.map-halftone {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  pointer-events: none;
+  background: radial-gradient(circle, #4a4a4a 0%, transparent 70%);
+}
+
+/* Bots */
+.bot {
+  position: absolute;
+  border: 2px solid #f5f5f5;
+}
+
+.bot-main {
+  top: 25%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  background: #4a4a4a;
+  animation: bounce 1.2s infinite;
+}
+
+.bot-warning {
+  bottom: 30%;
+  left: 25%;
+  width: 8px;
+  height: 8px;
+  background: #f97316;
+}
+
+.bot-idle {
+  top: 50%;
+  right: 25%;
+  width: 8px;
+  height: 8px;
+  background: #7a7a7a;
+}
+
+/* Status */
+.status-card {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  right: 6px;
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  padding: 0.35rem;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.progress-bar {
+  margin-top: 0.25rem;
+  height: 4px;
+  background: #e5e5e5;
+  border: 1px solid #6b6b6b;
+}
+
+.progress-fill {
+  width: 65%;
+  height: 100%;
+  background: #f97316;
+}
+
+/* ETA */
+.eta-card {
+height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
+  padding: 1rem;
+  background: #6b6b6b !important; /* Matches your screenshot's dark look */
+  color: white;
+}
+
+.eta-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.eta-icon {
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+/* Make ETA compact & vertical */
+.eta-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+/* Smaller ETA text */
+.eta-label {
+  font-size: 0.55rem;
+}
+
+.eta-value {
+  font-size: 0.75rem;
+}
+
+.info-section .eta-note{
+  font-size: 0.55rem;
+  margin-top: 0.4rem;
+  line-height: 1.2;
+}
+
+/* Customization Section */
+.custom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.section-header-tag {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #7a7a7a;
+  margin-bottom: 0.25rem;
+}
+
+.ingredients-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+/* Custom Scrollbar for ingredients */
+.ingredients-grid::-webkit-scrollbar { width: 4px; }
+.ingredients-grid::-webkit-scrollbar-thumb { background: #6b6b6b; }
+
+.ingredient-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 1.25rem;
+  background: #f5f5f5;
+  border: 2px solid #6b6b6b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ingredient-card:hover {
+  border-color: #4a4a4a;
+  transform: translateX(4px);
+  box-shadow: -4px 0 0 #6b6b6b;
+}
+
+.ingredient-card.active {
+  background: #6b6b6b;
+  color: #f5f5f5;
+  box-shadow: 4px 4px 0 rgba(74, 74, 74, 0.3);
+}
+
+.ingredient-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.ingredient-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.allergen-tag {
+  font-size: 9px;
+  font-weight: 900;
+  color: #f97316;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.ingredient-card.active .allergen-tag {
+  color: #fbbf24;
+}
+
+.ingredient-price-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.price-tag {
+  font-size: 10px;
+  font-weight: 800;
+  opacity: 0.6;
+}
+
+/* Checkout Card */
+.checkout-card {
+  background: white;
+  border: 3px solid #4a4a4a;
+  padding: 1.5rem;
+  box-shadow: 6px 6px 0 #6b6b6b;
+  display: flex;
+  flex-direction: column;
+}
+
+.price-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline; /* aligns label nicely with big number */
+  margin-bottom: 1rem;
+  height: 10px;
+}
+
+.price-summary .label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #999;
+}
+
+
+.price-summary .total-value {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #4a4a4a;
+  padding-top: 0;
+    margin-left: auto; /* pushes price to the right */
+}
+
+.guarantee-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+  padding: 8px 12px;
+  margin-bottom: 1.25rem;
+}
+
+.guarantee-badge span {
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #166534;
+  letter-spacing: 0.5px;
+}
+
+.launch-btn {
+  width: 100%;
+  padding: 1.25rem;          /* smaller */
+  height: 50%;
+  background: #6b6b6b;
+  color: white;
+  border: none;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: auto;          /* 👈 pushes it to the bottom */
+}
+
+.launch-btn:hover:not(.loading) {
+  background: #4a4a4a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.launch-btn.loading {
+  background: #e5e5e5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+
+/* Extra small devices (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .coffee-title {
+    font-size: 1.5rem;
+  }
+
+  .price {
+    font-size: 1.5rem;
+  }
+
+  .coffee-icon-large {
+    width: 120px;
+    height: 120px;
+  }
+
+  .store-section-title {
+    font-size: 1rem;
+  }
+
+  .coffee-card {
+    width: 130px;
+  }
+
+  .main-content {
+    padding: 0.85rem 0.65rem;
+  }
+}
