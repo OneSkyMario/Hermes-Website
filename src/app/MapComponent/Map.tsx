@@ -139,8 +139,8 @@ export default function MapComponent({ initialOpen = true, onClose }: { initialO
                 style={{ left: `${deliveryInfo.x}%`, top: `${deliveryInfo.y}%` }}
               >
                 <div className="relative">
-                  <div className="absolute inset-0 w-8 h-8 -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-red-500 rounded-full animate-spin" />
-                  <Target className="text-red-500 w-6 h-6 -translate-x-1/2 -translate-y-1/2" />
+                  <div className="absolute inset-0 w-8 h-8 -translate-x-1/2 -translate-y-1/2 border-2 border-red-500 rounded-full" />
+                  <MapPin className="text-red-500 w-6 h-6 -translate-x-1/2 -translate-y-1/2" />
                 </div>
               </div>
             )}
