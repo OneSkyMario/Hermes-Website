@@ -1,30 +1,29 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+// Make sure to define your API_URL
 const API_URL = process.env.NEXT_PUBLIC_NOT_OUR_VULNERABLE_API_URL || 'http://127.0.0.1:8000';
 
-export interface Coffee {
+// 1. Unified Product Interface (Use this instead of separate Coffee/Food interfaces)
+export interface ProductItem {
   productID: number;
   name: string;
   subtitle: string;
   description: string;
   imagestr: string;
   price: string;
-  origin: string;
-  volume: string;
-  caffeine: string;
-}
-
-interface ShopContextType {
-  coffees: Coffee[];
-  stores: Store[];
-  loading: boolean;
-  error: string | null;
-  getCoffeeById: (id: number) => Coffee | undefined;
+  category: 'COFFEE' | 'FOOD';
+  // Optional fields (present on some items, missing on others)
+  origin?: string;
+  volume?: string;
+  caffeine?: string;
+  weight?: string;
+  calories?: string;
 }
 
 export interface Store {
-   id: string; // Serializer sends 'id', not 'store_id'
+   id: string;
    name: string;
    image: string;
    rating: number;
@@ -36,45 +35,41 @@ export interface Store {
    distance: string;
 }
 
-export interface ProductItem {
-  productID: number;
-  name: string;
-  subtitle: string;
-  description: string;
-  imagestr: string;
-  price: string;
-  category: 'COFFEE' | 'FOOD';
-  // Optional specific fields
-  origin?: string;
-  volume?: string;
-  caffeine?: string;
-  weight?: string;
-  calories?: string;
+// 2. Updated Context Type to use ProductItem
+interface ShopContextType {
+  coffees: ProductItem[]; // Changed from Coffee[] to ProductItem[]
+  foods: ProductItem[];   // Added foods array
+  stores: Store[];
+  loading: boolean;
+  error: string | null;
+  getProductById: (id: number) => ProductItem | undefined; // Renamed for clarity
 }
-
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
 export function ShopProvider({ children }: { children: ReactNode }) {
-  const [coffees, setCoffees] = useState<Coffee[]>([]);
+  // Fixed state setter name (setProducts instead of setProduct)
+  const [products, setProducts] = useState<ProductItem[]>([]); 
+  const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [stores, setStores] = useState<Store[]>([]);
 
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/stores/`);
+        const res = await fetch(`${API_URL}/api/products/`);
         if (!res.ok) throw new Error('Terminal Error: Could not fetch catalog');
         const data = await res.json();
-        setCoffees(data);
+        
+        // FIX: You forgot to set the state here in your previous code!
+        setProducts(data); 
+
       } catch (err: any) {
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
+      // Note: We don't turn off loading here yet, we wait for both fetches
     };
+
     const fetchStoresData = async () => {
       try {
         const res = await fetch(`${API_URL}/api/stores/`);
@@ -83,20 +78,26 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         setStores(data);
       } catch (err: any) {
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
-    fetchProductData();
-    fetchStoresData();
+
+    // Run both, then turn off loading
+    Promise.all([fetchProductData(), fetchStoresData()]).finally(() => {
+        setLoading(false);
+    });
+
   }, []);
 
-  const getCoffeeById = (id: number) => {
-    return coffees.find((c) => c.productID === id);
+  // Filter products for specific uses
+  const coffees = products.filter(p => p.category === 'COFFEE');
+  const foods = products.filter(p => p.category === 'FOOD');
+
+  const getProductById = (id: number) => {
+    return products.find((c) => c.productID === id);
   };
 
   return (
-    <ShopContext.Provider value={{ coffees, stores, loading, error, getCoffeeById }}>
+    <ShopContext.Provider value={{ coffees, foods, stores, loading, error, getProductById }}>
       {children}
     </ShopContext.Provider>
   );
