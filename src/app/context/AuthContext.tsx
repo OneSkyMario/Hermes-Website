@@ -2,7 +2,7 @@
 
 import { init } from "next/dist/compiled/webpack/webpack";
 import { createContext, useContext, useEffect, useState } from "react";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const API_URL = process.env.NEXT_PUBLIC_NOT_OUR_VULNERABLE_API_URL || 'http://127.0.0.1:8000';
 
 export type User = {
   id: number;
@@ -77,7 +77,7 @@ const response = await fetch(`${API_URL}/api/auth/token/refresh/`, {
           
           if (newToken) {
             // Retry with new token
-            response = await fetch("http://127.0.0.1:8000/api/auth/me/", {
+            response = await fetch(`${API_URL}/api/auth/me/`, {
               headers: {
                 Authorization: `Bearer ${newToken}`,
               },
