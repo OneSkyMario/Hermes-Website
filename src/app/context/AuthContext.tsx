@@ -2,6 +2,7 @@
 
 import { init } from "next/dist/compiled/webpack/webpack";
 import { createContext, useContext, useEffect, useState } from "react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 export type User = {
   id: number;
@@ -32,8 +33,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/auth/token/refresh/", {
-      method: "POST",
+const response = await fetch(`${API_URL}/api/auth/token/refresh/`, {
+        method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       // Try with current token first
-        let response = await fetch("http://127.0.0.1:8000/api/auth/me/", {
+        let response = await fetch(`${API_URL}/api/auth/me/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

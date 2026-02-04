@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 export interface Coffee {
   productID: number;
@@ -64,7 +65,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/products/');
+        const res = await fetch(`${API_URL}/api/stores/`);
         if (!res.ok) throw new Error('Terminal Error: Could not fetch catalog');
         const data = await res.json();
         setCoffees(data);
@@ -76,7 +77,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     };
     const fetchStoresData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/stores/');
+        const res = await fetch(`${API_URL}/api/stores/`);
         if (!res.ok) throw new Error('Terminal Error: Could not fetch stores');
         const data = await res.json();
         setStores(data);
