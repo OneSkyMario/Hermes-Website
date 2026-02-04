@@ -2,12 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// 1. Check your Vercel Env Variable. If it fails, fallback to localhost.
 const API_URL = process.env.NEXT_PUBLIC_NOT_OUR_VULNERABLE_API_URL || 'http://127.0.0.1:8000';
 
-// 2. UNIFIED INTERFACES
-// We deleted 'interface Coffee' because it caused conflicts.
-// We use ProductItem for everything now.
 export interface ProductItem {
   productID: number;
   name: string;
@@ -16,7 +12,6 @@ export interface ProductItem {
   imagestr: string;
   price: string;
   category: 'COFFEE' | 'FOOD';
-  // All specific fields must be optional (?) because a Pizza doesn't have caffeine
   origin?: string;
   volume?: string;
   caffeine?: string;
@@ -38,12 +33,12 @@ export interface Store {
 }
 
 interface ShopContextType {
-  coffees: ProductItem[]; // CHANGED: Now uses ProductItem
-  foods: ProductItem[];   // CHANGED: Now uses ProductItem
+  coffees: ProductItem[];
+  foods: ProductItem[];
   stores: Store[];
   loading: boolean;
   error: string | null;
-  getProductById: (id: number) => ProductItem | undefined; // Renamed for clarity
+  getProductById: (id: number) => ProductItem | undefined;
 }
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
@@ -55,41 +50,48 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    // Общие заголовки для обхода защиты Ngrok
+    const headers = {
+      "ngrok-skip-browser-warning": "true",
+      "Content-Type": "application/json"
+    };
+
+    const fetchProductData = async () => {
       try {
-        setLoading(true);
-
-        // 1. Fetch Products
-        console.log(`Fetching products from: ${API_URL}/api/products/`);
-        const prodRes = await fetch(`${API_URL}/api/products/`);
-        if (!prodRes.ok) throw new Error(`Product Fetch Error: ${prodRes.status}`);
-        const prodData = await prodRes.json();
-        setProducts(prodData); // <--- YOU MISSED THIS LINE BEFORE
-
-        // 2. Fetch Stores
-        console.log(`Fetching stores from: ${API_URL}/api/stores/`);
-        const storeRes = await fetch(`${API_URL}/api/stores/`);
-        if (!storeRes.ok) throw new Error(`Store Fetch Error: ${storeRes.status}`);
-        const storeData = await storeRes.json();
-        setStores(storeData);
-
+        const res = await fetch(`${API_URL}/api/products/`, { headers });
+        if (!res.ok) throw new Error(`Products Error: ${res.status}`);
+        const data = await res.json();
+        setProducts(data);
       } catch (err: any) {
-        console.error("ShopProvider Error:", err);
+        console.error("Products fetch failed:", err);
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
 
-    fetchData();
+    const fetchStoresData = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/stores/`, { headers });
+        if (!res.ok) throw new Error(`Stores Error: ${res.status}`);
+        const data = await res.json();
+        setStores(data);
+      } catch (err: any) {
+        console.error("Stores fetch failed:", err);
+        setError(err.message);
+      }
+    };
+
+    // Запускаем оба запроса
+    Promise.all([fetchProductData(), fetchStoresData()]).finally(() => {
+        setLoading(false);
+    });
+
   }, []);
 
-  // Filter the unified list
   const coffees = products.filter(p => p.category === 'COFFEE');
   const foods = products.filter(p => p.category === 'FOOD');
 
   const getProductById = (id: number) => {
-    return products.find((p) => p.productID === id);
+    return products.find((c) => c.productID === id);
   };
 
   return (
