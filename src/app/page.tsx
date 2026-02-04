@@ -310,9 +310,7 @@ export default function Homepage() {
                       <div className="flex-1 text-white text-center md:text-left">
                         <div className="flex items-center gap-2 mb-3 justify-center md:justify-start">
                           <Coffee className="w-5 h-5 text-stone-800" />
-                          <span className="text-sm font-medium uppercase tracking-wider opacity-90">
-                            Напиток дня
-                          </span>
+                          
                         </div>
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">

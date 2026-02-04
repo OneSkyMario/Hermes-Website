@@ -16,10 +16,41 @@ export interface Coffee {
 
 interface ShopContextType {
   coffees: Coffee[];
+  stores: Store[];
   loading: boolean;
   error: string | null;
   getCoffeeById: (id: number) => Coffee | undefined;
 }
+
+export interface Store {
+   id: string; // Serializer sends 'id', not 'store_id'
+   name: string;
+   image: string;
+   rating: number;
+   price: number;
+   speed: string;
+   tag: string;
+   type: string | null;
+   address: string;
+   distance: string;
+}
+
+export interface ProductItem {
+  productID: number;
+  name: string;
+  subtitle: string;
+  description: string;
+  imagestr: string;
+  price: string;
+  category: 'COFFEE' | 'FOOD';
+  // Optional specific fields
+  origin?: string;
+  volume?: string;
+  caffeine?: string;
+  weight?: string;
+  calories?: string;
+}
+
 
 const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
@@ -28,10 +59,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [stores, setStores] = useState<Store[]>([]);
+
   useEffect(() => {
-    const fetchShopData = async () => {
+    const fetchProductData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/coffee/');
+        const res = await fetch('http://127.0.0.1:8000/api/products/');
         if (!res.ok) throw new Error('Terminal Error: Could not fetch catalog');
         const data = await res.json();
         setCoffees(data);
@@ -41,8 +74,20 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         setLoading(false);
       }
     };
-
-    fetchShopData();
+    const fetchStoresData = async () => {
+      try {
+        const res = await fetch('http://127.0.0.1:8000/api/stores/');
+        if (!res.ok) throw new Error('Terminal Error: Could not fetch stores');
+        const data = await res.json();
+        setStores(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProductData();
+    fetchStoresData();
   }, []);
 
   const getCoffeeById = (id: number) => {
@@ -50,7 +95,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <ShopContext.Provider value={{ coffees, loading, error, getCoffeeById }}>
+    <ShopContext.Provider value={{ coffees, stores, loading, error, getCoffeeById }}>
       {children}
     </ShopContext.Provider>
   );
