@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/app/context/AuthContext";
 import { ShopProvider } from "./context/ShopContext";
+import { OrderProvider } from "./context/OrderContext";
+import { DeliveryProvider } from "./context/DeliveryContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,10 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* ✅ Auth is available but NOT enforced */}
         <AuthProvider>
           <ShopProvider>
-            {children}
+            <OrderProvider>
+              <DeliveryProvider>
+                {children}
+              </DeliveryProvider>
+            </OrderProvider>
           </ShopProvider>
         </AuthProvider>
       </body>

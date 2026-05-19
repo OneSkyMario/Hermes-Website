@@ -1,160 +1,208 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { authService, otpService } from "@/lib/services";
+import type { MeResponse } from "@/lib/services";
 
-// 1. ENVIRONMENT VARIABLE (Critical for Vercel/Mobile)
-const API_URL = process.env.NEXT_PUBLIC_NOT_OUR_VULNERABLE_API_URL || 'http://127.0.0.1:8000';
+/* ── Types ────────────────────────────────────────────────────────── */
 
-// 2. HEADERS (Critical for Ngrok)
-const COMMON_HEADERS = {
-  "ngrok-skip-browser-warning": "true",
-  "Content-Type": "application/json",
-};
-
-export type User = {
-  id: number;
-  email: string;
-  full_name: string;
-  role: string;
-};
+export type User = MeResponse;
 
 type AuthContextType = {
   user: User | null;
   loading: boolean;
+
+  // auth
+  login: (username: string, password: string) => Promise<boolean>;
+  register: (data: {
+    username: string;
+    password: string;
+    email: string;
+    full_name?: string;
+    phone?: string;
+  }) => Promise<{ success: boolean; email?: string; error?: string }>;
+  verifyEmail: (email: string, code: string) => Promise<boolean>;
+  resendVerification: (email: string) => Promise<string>;
   logout: () => void;
-  login: (email: string, password: string) => Promise<boolean>;
   refreshAccessToken: () => Promise<string | null>;
+
+  // OTP password reset
+  requestOTP: (email: string) => Promise<string>;
+  verifyOTP: (email: string, code: string) => Promise<string>;
+  resetPassword: (resetToken: string, newPassword: string) => Promise<string>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+/* ── Provider ─────────────────────────────────────────────────────── */
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // --- Helper: Fetch User Data ---
-  // We use this in useEffect AND after a successful login
-  const fetchUserMe = async (token: string): Promise<User | null> => {
-    try {
-      const response = await fetch(`${API_URL}/api/auth/me/`, {
-        headers: {
-          ...COMMON_HEADERS,
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  /* ── helpers ──────────────────────────────────────────────── */
 
-      if (response.ok) {
-        return await response.json();
-      }
-      return null;
-    } catch (error) {
-      console.error("Error fetching me:", error);
+  const fetchMe = useCallback(async (): Promise<User | null> => {
+    try {
+      return await authService.me();
+    } catch {
       return null;
     }
-  };
+  }, []);
 
-  // --- 1. REFRESH TOKEN ---
-  const refreshAccessToken = async () => {
-    const refreshToken = localStorage.getItem("refresh");
-    if (!refreshToken) return null;
-
+  const refreshAccessToken = useCallback(async (): Promise<string | null> => {
+    const refresh = localStorage.getItem("refresh");
+    if (!refresh) return null;
     try {
-      const response = await fetch(`${API_URL}/api/auth/token/refresh/`, {
-        method: "POST",
-        headers: COMMON_HEADERS,
-        body: JSON.stringify({ refresh: refreshToken }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("access", data.access);
-        return data.access;
-      } else {
-        logout(); 
-        return null;
-      }
-    } catch (error) {
+      const data = await authService.refresh(refresh);
+      localStorage.setItem("access", data.access);
+      if (data.refresh) localStorage.setItem("refresh", data.refresh);
+      return data.access;
+    } catch {
+      logout();
       return null;
     }
-  };
+  }, []);
 
-  // --- 2. LOGIN FUNCTION (Implemented) ---
-  const login = async (email: string, password: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`${API_URL}/api/auth/login/`, {
-        method: "POST",
-        headers: COMMON_HEADERS,
-        body: JSON.stringify({ email, password }),
-      });
+  /* ── login ───────────────────────────────────────────────── */
 
-      if (response.ok) {
-        const data = await response.json();
-        
-        // 1. Save Tokens
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
-        
-        // 2. Update User State immediately
-        // If your login endpoint returns the user object, use: setUser(data.user);
-        // If it only returns tokens, we fetch the user manually:
-        const userData = await fetchUserMe(data.access);
-        if (userData) {
-          setUser(userData);
-        }
+  const login = useCallback(
+    async (username: string, password: string): Promise<boolean> => {
+      try {
+        const tokens = await authService.login(username, password);
+        localStorage.setItem("access", tokens.access);
+        localStorage.setItem("refresh", tokens.refresh);
 
+        const me = await fetchMe();
+        if (me) setUser(me);
         return true;
-      } else {
-        console.error("Login failed:", response.status);
+      } catch {
         return false;
       }
-    } catch (error) {
-      console.error("Login network error:", error);
-      return false;
-    }
-  };
+    },
+    [fetchMe],
+  );
 
-  // --- 3. LOGOUT FUNCTION ---
-  const logout = () => {
+  /* ── register (returns email for OTP step, no auto-login) ── */
+
+  const register = useCallback(
+    async (data: {
+      username: string;
+      password: string;
+      email: string;
+      full_name?: string;
+      phone?: string;
+    }): Promise<{ success: boolean; email?: string; error?: string }> => {
+      try {
+        const res = await authService.register(data);
+        return { success: true, email: res.email };
+      } catch (err: any) {
+        return { success: false, error: err.detail || "Registration failed." };
+      }
+    },
+    [],
+  );
+
+  /* ── verify email (final step — activates + logs in) ─────── */
+
+  const verifyEmail = useCallback(
+    async (email: string, code: string): Promise<boolean> => {
+      try {
+        const res = await authService.verifyEmail(email, code);
+        localStorage.setItem("access", res.access);
+        localStorage.setItem("refresh", res.refresh);
+
+        const me = await fetchMe();
+        if (me) setUser(me);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [fetchMe],
+  );
+
+  /* ── resend verification code ────────────────────────────── */
+
+  const resendVerification = useCallback(
+    async (email: string): Promise<string> => {
+      const res = await authService.resendVerification(email);
+      return res.detail;
+    },
+    [],
+  );
+
+  /* ── logout ──────────────────────────────────────────────── */
+
+  const logout = useCallback(() => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     setUser(null);
-  };
+  }, []);
 
-  // --- 4. INITIALIZATION (On Page Load) ---
+  /* ── OTP password reset ──────────────────────────────────── */
+
+  const requestOTP = useCallback(async (email: string): Promise<string> => {
+    const res = await otpService.requestOTP(email);
+    return res.detail;
+  }, []);
+
+  const verifyOTP = useCallback(
+    async (email: string, code: string): Promise<string> => {
+      const res = await otpService.verifyOTP(email, code);
+      return res.reset_token;
+    },
+    [],
+  );
+
+  const resetPassword = useCallback(
+    async (resetToken: string, newPassword: string): Promise<string> => {
+      const res = await otpService.resetPassword(resetToken, newPassword);
+      return res.detail;
+    },
+    [],
+  );
+
+  /* ── init on mount ───────────────────────────────────────── */
+
   useEffect(() => {
-    const initAuth = async () => {
+    const init = async () => {
       const token = localStorage.getItem("access");
       if (!token) {
         setLoading(false);
         return;
       }
 
-      // Try fetching user with current token
-      let userData = await fetchUserMe(token);
-
-      // If failed (likely expired), try refreshing
-      if (!userData) {
+      let me = await fetchMe();
+      if (!me) {
         const newToken = await refreshAccessToken();
-        if (newToken) {
-          userData = await fetchUserMe(newToken);
-        }
+        if (newToken) me = await fetchMe();
       }
 
-      if (userData) {
-        setUser(userData);
-      } else {
-        // If refresh failed too, user is logged out
-        setUser(null); 
-      }
-      
+      if (me) setUser(me);
       setLoading(false);
     };
 
-    initAuth();
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, refreshAccessToken, login }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        verifyEmail,
+        resendVerification,
+        logout,
+        refreshAccessToken,
+        requestOTP,
+        verifyOTP,
+        resetPassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
