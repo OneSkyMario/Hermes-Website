@@ -34,6 +34,7 @@ export interface MeResponse {
     email: string;
     phone: string;
   };
+  role: string;
 }
 
 /* ── Auth ─────────────────────────────────────────────────────────── */
