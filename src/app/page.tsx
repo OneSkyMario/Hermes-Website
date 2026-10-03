@@ -1,403 +1,55 @@
 'use client';
-
-import React, { useEffect, useRef, useState } from 'react';
-import { Coffee, LogOut, Star, User, ArrowRight } from 'lucide-react';
-import { usePathname } from 'next/navigation'; // Optional: for active link highlighting
-import './navbar.css'
-import './page.css';
-import { useRouter } from 'next/navigation'; // For Next.js 13+ (App Router)
-import coffeeImage from '../assets/espresso.webp';
-import cappuccinoImage from '../assets/espresso.webp'; // Temporary, replace with cappiccuno.webp
-import latteImage from '../assets/espresso.webp'; // Temporary, replace with latte.webp
-import robotImage from '../assets/image.png'; // Add your robot PNG here
-import { useAuth } from '@/app/context/AuthContext';
-import AuthModal from './registration/page';
+import { useRef, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Coffee, MapPin, Navigation, PackageCheck } from 'lucide-react';
+import SiteHeader from '@/components/navigation/SiteHeader';
+import MapComponent from './MapComponent/Map';
 import { useShop } from './context/ShopContext';
-
-
-export const recommendations = [
-  {
-    id: 'r1',
-    name: 'Caramel Macchiato',
-    description: 'Espresso with steamed milk and industrial-grade caramel drizzle.',
-    category: 'BEVERAGE',
-    powerLevel: '85%',
-    thermalRating: 'HOT',
-    image: 'https://images.unsplash.com/photo-1485808191679-5f86510681a2?q=80&w=800&auto=format&fit=crop'
-  },
-  {
-    id: 'r2',
-    name: 'Margherita Pizza',
-    description: 'Standardized pizza unit with fresh basil and mozzarella fusion.',
-    category: 'MAIN_MEAL',
-    powerLevel: '92%',
-    thermalRating: 'WARM',
-    image: 'https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=800&auto=format&fit=crop'
-  }
-  // Add as many as you need...
-];
+import './page.css';
+import './hero.css';
 
 export default function Homepage() {
-  
-// 1. All Refs
-  const navbarRef = useRef<HTMLElement>(null);
-  const robotRef = useRef<HTMLImageElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  // 2. All State Hooks
+  const { coffees, loading, error } = useShop();
+  const carousel = useRef<HTMLDivElement>(null);
+  const [showMap, setShowMap] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [modalState, setModalState] = useState({ isOpen: false, isLogin: true });
-
-  // 3. Navigation/Auth Hooks
-  const pathname = usePathname(); 
-  const router = useRouter();
-  const { user, logout, loading } = useAuth();
-  const { coffees, loading: shopLoading, error: shopError } = useShop();
-
-  // Separate useEffect for navbar hide/show on page scroll
-  // 4. ALL EFFECT HOOKS (Must stay at the top level)
-  useEffect(() => {
-  let lastScrollY = window.scrollY;
-  
-  const handleScroll = () => {
-      const navbar = navbarRef.current;
-      if (!navbar) return;
-      
-      const isMobile = window.innerWidth <= 768;
-      const currentScrollY = window.scrollY;
-      
-      if (isMobile) {
-        // On mobile, navbar is not sticky - stays below header
-        navbar.style.position = 'relative';
-        navbar.style.transform = 'translateY(0)';
-      } else {
-        // On desktop, navbar is sticky and hides/shows
-        navbar.style.position = 'sticky';
-        
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-          // Scrolling down
-          navbar.style.transform = 'translateY(-100%)';
-        } else {
-          // Scrolling up
-          navbar.style.transform = 'translateY(0)';
-        }
-      }
-      
-      lastScrollY = currentScrollY;
-    };
-    
-    const handleResize = () => {
-      const navbar = navbarRef.current;
-      if (!navbar) return;
-      
-      const isMobile = window.innerWidth <= 768;
-      
-      if (isMobile) {
-        navbar.style.position = 'relative';
-        navbar.style.transform = 'translateY(0)';
-      } else {
-        navbar.style.position = 'sticky';
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-    
-    // Initial check
-    handleResize();
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-    useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const scrollLeft = container['scrollLeft'];
-      const itemWidth = container['offsetWidth'];
-      const index = Math.round(scrollLeft / itemWidth);
-      
-      setCurrentIndex(index);
-    };
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
-  // 5. HELPER FUNCTIONS
-
-  const openAuth = (loginMode: boolean) => {
-    setModalState({ isOpen: true, isLogin: loginMode });
+  const scrollTo = (index: number) => {
+    const container = carousel.current;
+    container?.scrollTo({ left: container.clientWidth * index, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   };
-  
-  const scrollToIndex = (index: number) => {
-    const container = scrollContainerRef['current'];
-    if (!container) return;
-    
-    const itemWidth = container['offsetWidth'];
-    container.scrollTo({
-      left: itemWidth * index,
-      behavior: 'smooth'
-    });
-  };
-  
-
-  const handleCoffeeClick = (productID: number) => {
-    // Navigate to coffee detail page
-    router.push(`/coffee/${productID}`);
-  };
-
-  // 6. CONDITIONAL RENDERING (Place this AFTER all hooks)
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f5]">
-        <div className="animate-pulse font-black text-[#6b6b6b]">INITIALIZING TERMINAL...</div>
-      </div>
-    );
-  }
-  // 7. MAIN RENDER
-
-  return (
-    <div>
-      <header className="header" ref={navbarRef}>
-      <div className="header-left">
-        <div className="logo-circle">
-          <Coffee className="w-6 h-6" /> </div>
-        <h1 className="logo-text">Otto</h1>
-        </div>
-      
-        <nav className="nav-center">
-          <div className="dropdown">
-            <a href="#" className="nav-link active">Drinks</a>
-          < div className="dropdown-content">
-            <div className="dropdown">
-              <a href="#Coffee">Coffee</a>
-              </div>
-            <div className="dropdown">
-              <a href="#">Tea</a>
-            </div>
-            <div className="dropdown">
-              <a href="#">Juice</a>
-            </div>
-          </div>
-          </div>
-        <div className="dropdown">
-          <a href="#" className="nav-link active">Food</a>
-          <div className="dropdown-content">
-            <a href="#">Pizza</a>
-          </div>
-        </div>
-        </nav>
-      <div className="user-info">
-        <div className="user-avatar">
-          <span>{user?.full_name[0]}</span> </div>
-        <div className="user-details">
-        {/* Mobile-friendly User Info */}
-      <div className="flex items-center gap-[1rem]">
-        {user ? (
-          <div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg">
-                <User size={20} />
-                <span className="font-semibold">{user.email}</span>
-              </div>
-          <button onClick={logout} className="p-[0.5rem] border-[0.15rem] border-black hover:bg-black hover:text-white transition-colors">
-            <LogOut size={18} />
-          </button>
-          </div>
-        ) : (
-          <div> 
-            <div> <button onClick={() => openAuth(true)} className="text-[0.8rem] font-black uppercase border-b-[0.2rem] border-black">Login</button>
-            </div>
-            <div> <button onClick={() => openAuth(false)} className="text-[0.8rem] font-black uppercase border-b-[0.2rem] border-black">Sign Up</button>
-            </div>
-          </div>
-        )}
-      </div>
-        </div>
-        
-      </div>
-      
-    </header>
-
-      
-
-      <main>
-        <section id="recommendation" className="info-section">
-        <div className="section-header">
-          <div className="flex items-center gap-4">
-            <h2>Recommendations</h2>
-          </div>
-        </div>
-        
-        <div className="halftone-line"></div>
-
-        <div className="sketch-container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          {recommendations.map((item) => (
-            <div 
-              key={item.id} 
-              className="sketch-item"
-              onClick={() => {
-                // Logic to route correctly:
-                const path = item.category === 'BEVERAGE' ? 'coffee' : 'mainMeal';
-                // Using item.id.replace('r', '') to get just the number if needed
-                router.push(`/${path}/${item.id.replace('r', '')}`);
-              }}
-              style={{ cursor: 'pointer', border: '2px solid #6b6b6b', padding: '1rem' }}
-            >
-              <div className="section-header-tag" style={{ fontSize: '0.6rem', marginBottom: '0.5rem' }}>
-                {item.category} // POWER: {item.powerLevel}
-              </div>
-              <h3 className="font-bold uppercase">{item.name}</h3>
-              <p className="text-sm opacity-70">{item.description}</p>
-              
-              <div className="mt-4 flex justify-between items-center">
-                <span className="font-mono text-xs bg-black text-white px-2 py-1">
-                  {item.thermalRating}
-                </span>
-                <ArrowRight size={16} />
-              </div>
-            </div>
-          ))}
+  return <div className="app-shell home-shell">
+    <SiteHeader />
+    <main id="main-content">
+      <section className="home-hero" aria-labelledby="hero-title">
+        <div className="hero-halftone" aria-hidden="true"/>
+        <div className="hero-copy">
+          <p className="eyebrow"><span className="blue-dot"/> Autonomous delivery</p>
+          <h1 id="hero-title">Your next delivery.<br/><span>A little more autonomous.</span></h1>
+          <p className="hero-description">Good coffee. A new way to get there.<br/>Meet Otto, your autonomous delivery companion.</p>
+          <div className="hero-actions"><a href="#menu" className="button button-primary">Explore the menu <ArrowRight size={18}/></a><a href="#delivery" className="text-link">Meet the delivery system <ArrowUpRight size={16}/></a></div>
         </div>
       </section>
-
-        <section id="menu" className="info-section">
-          <div className="section-header">
-            <h2 id="Coffee">Coffee</h2>
+      <div className="capability-strip"><span><Navigation size={17}/> Autonomous navigation</span><span><MapPin size={17}/> From pickup to doorstep</span><span><PackageCheck size={17}/> Everyday delivery</span><span className="strip-index">OTTO / DELIVERY SYSTEM</span></div>
+      <section id="menu" className="home-section" aria-labelledby="menu-title">
+        <div className="section-heading"><div><p className="eyebrow">01 / The menu</p><h2 id="menu-title">Your usual. A new route.</h2></div><p>Choose a coffee, pick a store,<br/>and explore robot delivery.</p></div>
+        {loading ? <div className="catalog-state" role="status"><Coffee size={28}/><h3>Loading the coffee menu…</h3><p>Finding your next pick.</p></div> : error ? <div className="catalog-state" role="status"><Coffee size={28}/><h3>The menu is temporarily unavailable</h3><p>We couldn’t reach the catalog. Please try again shortly.</p><button className="button button-secondary" onClick={() => window.location.reload()}>Try again <ArrowRight size={16}/></button></div> : coffees.length === 0 ? <div className="catalog-state"><Coffee size={28}/><h3>A fresh menu is on its way</h3><p>No coffees are listed yet. Check back soon.</p></div> : <>
+          <div ref={carousel} className="coffee-carousel" onScroll={e => setCurrentIndex(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}>
+            {coffees.map(coffee => <article className="catalog-slide" key={coffee.productID}>
+              <div className="catalog-image">{coffee.imagestr ? <Image unoptimized src={coffee.imagestr} alt={coffee.name} width={480} height={400}/> : <Coffee size={100} strokeWidth={1}/>}<span className="image-caption">THE DAILY PICK / COFFEE</span></div>
+              <div className="catalog-copy"><p className="eyebrow">Coffee collection</p><h3>{coffee.name}</h3><p>{coffee.description || coffee.subtitle}</p><div className="catalog-bottom"><span className="catalog-price">{coffee.price}</span><Link className="button button-primary" href={`/coffee/${coffee.productID}`}>Choose your coffee <ArrowRight size={17}/></Link></div></div>
+            </article>)}
           </div>
-          <div className="halftone-line"></div>
-          
-          {/* Scrollable Container */}
-        <div
-          ref={scrollContainerRef}
-          className="overflow-x-scroll overflow-y-hidden  snap-x snap-mandatory scrollbar-hide hover:shadow-[5px_5px_0_#6b6b6b] hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 rounded-3xl"
-        
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            WebkitOverflowScrolling: 'touch'
-          }}
-        >
-          <div className="flex">
-            {coffees.map((coffee, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 w-full snap-start snap-always px-4"
-                onClick={() => handleCoffeeClick(coffee.productID)}
-              >
-                <div
-                  className=""
-                >
-                  {/* Decorative Elements */}
-                  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-                  <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
-                  
-                  {/* Content */}
-                  <div className="relative z-10 p-6 md:p-12">
-                    <div className="flex flex-col md:flex-row items-center gap-8">
-                      {/* Coffee Image */}
-                      <div className="flex-shrink-0">
-                        <img
-                          src={coffee.imagestr}
-                          alt={coffee.name}
-                          className="w-48 h-48 md:w-64 md:h-64 object-cover rounded-2xl drop-shadow-2xl ring-4 ring-white/30"
-                        />
-                      </div>
-
-                      {/* Coffee Info */}
-                      <div className="flex-1 text-white text-center md:text-left">
-                        <div className="flex items-center gap-2 mb-3 justify-center md:justify-start">
-                          <Coffee className="w-5 h-5 text-stone-800" />
-                          
-                        </div>
-
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                          {coffee.name}
-                        </h2>
-
-                        <p className="text-lg md:text-xl mb-6 opacity-90">
-                          {coffee.description}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
-                          <span className="text-3xl md:text-4xl font-bold">
-                            {coffee.price}
-                          </span>
-                          <button className="bg-white text-stone-900 px-8 py-3 rounded-full font-semibold hover:bg-stone-100 transition-all hover:scale-105 active:scale-95 shadow-lg">
-                            Заказать
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-      
-          </div>
-          {/* Dots Indicator */}
-        <div className="flex justify-center gap-2 mt-6 position: relative">
-          {coffees.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollToIndex(index)}
-              className={`transition-all duration-300 rounded-full ${
-                index === currentIndex
-                  ? 'w-10 h-3 bg-black'      /* ACTIVE: Longer and Darkest (Whiten if background is dark) */
-                  : 'w-3 h-3 bg-stone-300 opacity-50 hover:opacity-100' /* INACTIVE: Small and Light */              }`}
-              aria-label={`Go to coffee ${index + 1}`}
-            />
-          ))}
-        </div>
-        </section>
-
-
-
-        <section id="robot" className="" style={{ position: 'relative', overflow: 'visible' }}>
-          {/* Floating Robot Image */}
-          <img 
-            ref={robotRef}
-            src={robotImage.src}
-            alt="Floating Robot"
-            className="floating"
-            style={{
-              position: 'absolute',
-              width: 'clamp(100px, 15vw, 200px)',
-              height: 'auto',
-              top: 'clamp(-50px, -8vw, -100px)',
-              right: 'clamp(5%, 10vw, 10%)',
-              filter: 'drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3))',
-              cursor: 'pointer',
-              zIndex: 10,
-              transition: 'transform 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.1) rotate(5deg)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
-            }}
-          />
-          
-        
-        </section>
-
-        
-      </main>
-
-      <footer>
-        <p>&copy; 2026 OTTO Transportation Services | All Rights Reserved</p>
-        <p>Automated Delivery • Robot Assistance • 24/7 Service</p>
-      </footer>
-      {/* The Popup component */}
-      <AuthModal 
-        isOpen={modalState.isOpen} 
-        initialLogin={modalState.isLogin}
-        onClose={() => setModalState({ ...modalState, isOpen: false })} 
-      />
-    </div>
-  );
+          <div className="carousel-controls"><span>{String(currentIndex + 1).padStart(2, '0')} <span className="muted">/ {String(coffees.length).padStart(2, '0')}</span></span><div className="carousel-dots">{coffees.map((coffee, index) => <button key={coffee.productID} aria-label={`Show ${coffee.name}`} aria-pressed={currentIndex === index} onClick={() => scrollTo(index)}/>)}</div><div className="carousel-arrows"><button aria-label="Previous coffee" disabled={currentIndex === 0} onClick={() => scrollTo(currentIndex - 1)}><ChevronLeft size={20}/></button><button aria-label="Next coffee" disabled={currentIndex === coffees.length - 1} onClick={() => scrollTo(currentIndex + 1)}><ChevronRight size={20}/></button></div></div>
+        </>}
+        <Link href="/mainMeal/1" className="food-link"><span><span className="eyebrow">Something to go with it?</span><strong>Explore the food menu <span className="demo-badge">Demo</span></strong></span><ArrowUpRight size={24}/></Link>
+      </section>
+      <section id="delivery" className="delivery-section" aria-labelledby="delivery-title">
+        <div className="delivery-copy"><p className="eyebrow">02 / Behind the delivery</p><h2 id="delivery-title">Small wheels.<br/>A whole new way.</h2><p>From the first pickup to the final turn, explore how a robot moves through its delivery environment.</p><button onClick={() => setShowMap(true)} className="button button-primary">Explore the map <ArrowUpRight size={17}/></button><p className="demo-note">Interactive demo · sample positions, no live dispatch</p></div>
+        <button className="route-preview" onClick={() => setShowMap(true)} aria-label="Open the delivery map demo"><span className="route-preview-label">NAVIGATION / MAP PREVIEW <span className="demo-badge">Demo</span></span><svg viewBox="0 0 580 330" aria-hidden="true"><g fill="#eaf2f7" stroke="#d5e4ee"><rect x="25" y="30" width="120" height="90" rx="8"/><rect x="175" y="30" width="155" height="90" rx="8"/><rect x="360" y="30" width="190" height="90" rx="8"/><rect x="25" y="155" width="180" height="145" rx="8"/><rect x="240" y="155" width="90" height="145" rx="8"/><rect x="360" y="155" width="190" height="145" rx="8"/></g><path d="M90 140h133v85h122V140h130" stroke="#218fea" strokeWidth="3" strokeDasharray="6 6" fill="none"/><circle cx="90" cy="140" r="9" fill="white" stroke="#218fea" strokeWidth="3"/><circle cx="475" cy="140" r="12" fill="#218fea"/><circle cx="475" cy="140" r="4" fill="white"/><g fill="#526b7f" fontSize="11" fontFamily="monospace"><text x="55" y="102">PICKUP</text><text x="425" y="102">DESTINATION</text></g></svg><span className="route-preview-footer"><span><span className="blue-dot"/> A route, from A to B.</span><ArrowUpRight size={18}/></span></button>
+      </section>
+    </main>
+    <footer className="site-footer"><Link href="/" className="brand">otto<span className="brand-dot">.</span></Link><p>Everyday delivery. Thoughtfully autonomous.</p><span>© {new Date().getFullYear()} Otto</span></footer>
+    {showMap && <MapComponent onClose={() => setShowMap(false)}/>}
+  </div>;
 }

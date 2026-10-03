@@ -1,6 +1,9 @@
 'use client';
 
+import { errorMessage } from '@/lib/errors';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
+import { normalizeCoffeeList } from '@/lib/catalog';
 
 const API_URL = process.env.NEXT_PUBLIC_NOT_OUR_VULNERABLE_API_URL || 'http://127.0.0.1:8000';
 
@@ -58,13 +61,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
     const fetchProductData = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/products/`, { headers });
+        const res = await fetch(`${API_URL}/api/coffee/`, { headers });
         if (!res.ok) throw new Error(`Products Error: ${res.status}`);
         const data = await res.json();
-        setProducts(data);
-      } catch (err: any) {
+        setProducts(normalizeCoffeeList(data));
+      } catch (err: unknown) {
         console.error("Products fetch failed:", err);
-        setError(err.message);
+        setError(errorMessage(err, 'Unable to load the catalog.'));
       }
     };
 
@@ -73,10 +76,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         const res = await fetch(`${API_URL}/api/stores/`, { headers });
         if (!res.ok) throw new Error(`Stores Error: ${res.status}`);
         const data = await res.json();
-        setStores(data);
-      } catch (err: any) {
+        const rows = Array.isArray(data) ? data : data.results;
+        if (!Array.isArray(rows)) throw new Error('Invalid stores response');
+        setStores(rows);
+      } catch (err: unknown) {
         console.error("Stores fetch failed:", err);
-        setError(err.message);
+        setError(errorMessage(err, 'Unable to load the catalog.'));
       }
     };
 

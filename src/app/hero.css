@@ -1,0 +1,47 @@
+/* Full-bleed photographic halftone with live content above the paper clearing. */
+.app-shell.home-shell { position: relative; width: 100%; margin: 0; border: 0; background: #fafaf7; }
+.home-shell > .site-header { position: absolute; z-index: 5; top: 20px; left: 50%; transform: translateX(-50%); width: min(1384px, calc(100% - 64px)); padding: 17px 28px; background: #fffffff2; border: 1px solid var(--border); }
+.home-shell > .site-header .brand { font-size: 36px; }
+.home-shell > .site-header .brand-icon { width: 42px; height: 44px; }
+.home-hero { position: relative; isolation: isolate; display: flex; align-items: center; min-height: max(800px, 100svh); overflow: hidden; background: #fafaf7; }
+.hero-halftone { position: absolute; z-index: -2; inset: 0; pointer-events: none; background: url('/art/hero-street-halftone.png') center / cover no-repeat; }
+.hero-copy { width: 70%; margin-left: 28%; padding: 150px 24px 145px 0; position: relative; text-align: left; }
+.hero-copy .eyebrow { display: flex; align-items: center; gap: 12px; color: #0086fa; font-size: .78rem; letter-spacing: .16em; }
+.hero-copy .blue-dot { background: #0086fa; width: 7px; height: 7px; }
+.hero-copy h1 { margin: 30px 0 22px; font-size: clamp(3rem, 4.15vw, 4.5rem); font-weight: 500; letter-spacing: -.065em; line-height: 1.12; }
+.hero-copy h1 span { color: #0086fa; }
+.hero-description { color: #61717e; font-size: clamp(1rem, 1.4vw, 1.4rem); line-height: 1.5; }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 32px; margin-top: 32px; }
+.hero-actions .button { min-height: 56px; padding-inline: 28px; border-radius: 7px; font-size: 1rem; }
+.hero-actions .button-primary { background: #0086f5; }
+.hero-actions .button-primary:hover { background: #086ac2; }
+.hero-actions .text-link { min-height: 48px; font-size: 1rem; color: #111b24; }
+.hero-actions .text-link:hover { color: #0086f5; }
+.home-shell .home-section, .home-shell .delivery-section, .home-shell .site-footer, .home-shell .capability-strip { max-width: 1440px; margin-inline: auto; }
+@media (max-width: 1100px) {
+  .hero-copy { width: 76%; margin-left: 22%; }
+  .hero-copy h1 { font-size: clamp(2.6rem, 4.3vw, 3.2rem); }
+  .hero-description { font-size: 1.1rem; }
+}
+@media (max-width: 768px) {
+  .home-shell > .site-header { top: 16px; width: calc(100% - 32px); padding: 16px 20px; }
+  .home-hero { min-height: 850px; }
+  .hero-copy { width: 100%; margin: 0; padding: 200px 32px 170px; }
+  .hero-copy h1 { max-width: 620px; font-size: clamp(2.7rem, 6.5vw, 3.5rem); }
+  .hero-halftone { background-position: 57% center; }
+  .home-hero::after { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(ellipse 75% 38% at 45% 50%, #fafaf7 40%, #fafaf7eb 65%, #fafaf700 100%); }
+  .hero-actions { gap: 16px 24px; }
+}
+@media (max-width: 480px) {
+  .home-shell > .site-header { padding: 14px 16px; gap: 12px; }
+  .home-shell > .site-header .brand { font-size: 30px; }
+  .home-shell > .site-header .brand-icon { width: 32px; height: 34px; margin-right: 7px; }
+  .home-shell > .site-header .site-account { gap: 12px; }
+  .home-shell > .site-header .button { padding: 10px 12px; }
+  .hero-copy { padding: 220px 24px 155px; }
+  .hero-copy .eyebrow { font-size: .66rem; }
+  .hero-copy h1 { font-size: clamp(2.4rem, 10.2vw, 3rem); margin-top: 24px; }
+  .hero-description { font-size: 1rem; }
+  .hero-actions { flex-direction: column; align-items: flex-start; gap: 12px; margin-top: 26px; }
+  .hero-actions .button { min-height: 52px; }
+}

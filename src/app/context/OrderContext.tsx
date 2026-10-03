@@ -1,5 +1,6 @@
 "use client";
 
+import { errorMessage } from '@/lib/errors';
 import {
   createContext,
   useContext,
@@ -9,7 +10,6 @@ import {
 } from "react";
 import { orderService } from "@/lib/services";
 import type { Order, OrderStatus, PlaceOrderPayload } from "@/lib/services";
-import { useAuth } from "./AuthContext";
 
 /* ── Context shape ────────────────────────────────────────────────── */
 
@@ -36,7 +36,6 @@ const OrderContext = createContext<OrderContextType | null>(null);
 /* ── Provider ─────────────────────────────────────────────────────── */
 
 export function OrderProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,8 +46,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     try {
       const data = await orderService.list(status ? { status } : undefined);
       setOrders(data);
-    } catch (err: any) {
-      setError(err.detail || "Failed to load orders");
+    } catch (err: unknown) {
+      setError(errorMessage(err, "Failed to load orders"));
     } finally {
       setLoading(false);
     }

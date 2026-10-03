@@ -1,5 +1,4 @@
 import espresso from '@/assets/espresso.webp'
-import { useEffect, useState } from 'react';
 export interface Coffee {
     productID: number;
     name: string;

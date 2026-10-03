@@ -1,0 +1,22 @@
+:root {
+  --bg-main: #f7f9fa;
+  --surface: #fff;
+  --text-primary: #111b24;
+  --text-secondary: #606e79;
+  --border: #dfe6eb;
+  --blue-50: #eff8ff;
+  --blue-500: #42aaf5;
+  --blue-600: #218fea;
+  --blue-700: #1475d1;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+}

@@ -1,12 +1,11 @@
 "use client";
 
+import { errorMessage } from '@/lib/errors';
 import {
   createContext,
   useContext,
   useState,
   useCallback,
-  useEffect,
-  useRef,
   type ReactNode,
 } from "react";
 import { deliveryService, robotService } from "@/lib/services";
@@ -16,7 +15,6 @@ import type {
   Robot,
   ETABreakdown,
 } from "@/lib/services";
-import { useAuth } from "./AuthContext";
 
 /* ── Context shape ────────────────────────────────────────────────── */
 
@@ -53,7 +51,6 @@ const DeliveryContext = createContext<DeliveryContextType | null>(null);
 /* ── Provider ─────────────────────────────────────────────────────── */
 
 export function DeliveryProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [robots, setRobots] = useState<Robot[]>([]);
   const [loading, setLoading] = useState(false);
@@ -68,8 +65,8 @@ export function DeliveryProvider({ children }: { children: ReactNode }) {
       try {
         const data = await deliveryService.list(filters);
         setDeliveries(data);
-      } catch (err: any) {
-        setError(err.detail || "Failed to load deliveries");
+      } catch (err: unknown) {
+        setError(errorMessage(err, "Failed to load deliveries"));
       } finally {
         setLoading(false);
       }
@@ -122,8 +119,8 @@ export function DeliveryProvider({ children }: { children: ReactNode }) {
     try {
       const data = await robotService.list();
       setRobots(data);
-    } catch (err: any) {
-      setError(err.detail || "Failed to load robots");
+    } catch (err: unknown) {
+      setError(errorMessage(err, "Failed to load robots"));
     }
   }, []);
 

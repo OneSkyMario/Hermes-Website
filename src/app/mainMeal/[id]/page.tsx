@@ -3,14 +3,15 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { 
-  Utensils, MapPin, Thermometer, Clock, Star, User, ArrowLeft, 
+  Utensils, Clock, Star, ArrowLeft, 
   ChevronDown, Zap, Tag, ThumbsUp, Navigation, Info, Check, 
-  Plus, ArrowRight, ShieldCheck, Maximize2, Pizza, Beef, Salad
+  Plus, ArrowRight, Maximize2, Pizza, Beef, Salad
 } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 // We reuse the same CSS file to maintain the exact design system
-import '@/app/coffee/[id]/page.css'; 
-import { useShop } from '@/app/context/ShopContext';
+import '@/styles/product.css';
+import SiteHeader from '@/components/navigation/SiteHeader'; 
+
 import MapComponent from '@/app/MapComponent/Map';
 
 // --- MOCK DATA FOR MEALS ---
@@ -85,7 +86,6 @@ export default function MainMealDetail() {
   
   // Find selected meal or default to first
   const selectedMeal = MEALS.find(m => m.id === mealId) || MEALS[0];
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
 
   const [activeStore, setActiveStore] = useState(MEAL_STORES[0]);
   const [selectedToppings, setSelectedToppings] = useState<string[]>([]);
@@ -93,8 +93,8 @@ export default function MainMealDetail() {
   const [showMap, setIsMapOpen] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsStoreDropdownOpen(false);
       }
     };
@@ -128,40 +128,21 @@ export default function MainMealDetail() {
     }, 2000);
   };
 
-  const MealIcon = getMealIcon(selectedMeal.type);
+  
 
   return (
-    <div className="page-wrapper">
+    <div className="product-page">
       <div className="container">
         {/* Header */}
-        <header className="header">
-          <div className="header-left">
-            <button className="back-btn" onClick={() => router.push('/')}>
-              <ArrowLeft className="icon" />
-            </button>
-            <div className="logo">
-              <Utensils style={{ width: '32px', height: '32px' }} />
-              <span>Otto Food</span>
-            </div>
-          </div>
-
-          <div className="user-info">
-            <div className="user-avatar">
-              <User className="icon" />
-            </div>
-            <div className="user-details">
-              <div className="user-name">Grayson Adler</div>
-              <div className="user-role">Logistics Lead</div>
-            </div>
-          </div>
-        </header>
+        <SiteHeader />
+        <p className="product-demo-note">Delivery preview · Map positions, add-ons, and checkout are demonstration data. No order is submitted.</p>
 
         {/* Main Content */}
-        <div className="main-content">
+        <div className="main-content" id="main-content">
           {/* Left Column */}
           <div className="info-section">
             <div>
-              <h1 className="coffee-title">{selectedMeal.name}</h1>
+              <button className="product-back" onClick={() => router.push("/")}><ArrowLeft size={16}/> Back to menu</button><h1 className="coffee-title">{selectedMeal.name}</h1>
               <p className="coffee-subtitle">{selectedMeal.subtitle}</p>
             </div>
 
@@ -174,7 +155,7 @@ export default function MainMealDetail() {
               <div className="store-dropdown-container" ref={dropdownRef}>
                 <button 
                   onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-                  className="store-dropdown-btn"
+                  className="store-dropdown-btn" aria-label="Choose store" aria-expanded={isStoreDropdownOpen}
                 >
                   <div className="store-dropdown-btn-content">
                     <div className="store-dropdown-icon">
@@ -266,7 +247,7 @@ export default function MainMealDetail() {
                 )}
               </div>
 
-              {selectedStore && (
+              {activeStore && (
                 <div className="selected-store-info">
                   <div className="selected-store-label">Selected Hub:</div>
                   <div className="selected-store-name">{activeStore.name}</div>
@@ -281,10 +262,10 @@ export default function MainMealDetail() {
                 <div className="card map-card">
                   <div className="card-header">
                     <h3 className="card-title">Autonomous Map</h3>
-                    <span className="badge">4 BOTS ACTIVE</span>
+                    <span className="badge">SAMPLE POSITIONS</span>
                   </div>
                   <div 
-                    className="map-container"
+                    className="map-container" role="button" tabIndex={0} aria-label="Open delivery map demo" onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setIsMapOpen(true); } }}
                     onClick={() => setIsMapOpen(true)}
                     style={{ cursor: 'pointer', position: 'relative' }}
                   >
@@ -332,7 +313,7 @@ export default function MainMealDetail() {
                     <div className="status-card">
                       <div className="status-header">
                         <Navigation size={12} />
-                        <span>Bot #9220 moving south</span>
+                        <span>Bot #9220 · sample position</span>
                       </div>
                       <div className="progress-bar">
                         <div className="progress-fill" />
@@ -348,11 +329,11 @@ export default function MainMealDetail() {
                       <Clock size={14} />
                     </div>
                     <div>
-                      <div className="eta-label">Estimated Time</div>
+                      <div className="eta-label">Example delivery time</div>
                       <div className="eta-value">8-12 MIN</div>
                     </div>
                   </div>
-                  <p className="eta-note" style={{ color: 'rgba(255,255,255,0.7)' }}>
+                  <p className="eta-note" >
                     Your meal is prioritized through the optimal hub for heat retention.
                   </p>
                 </div>
@@ -372,9 +353,9 @@ export default function MainMealDetail() {
                 className={`launch-btn ${isOrdering ? 'loading' : ''}`}
               >
                 {isOrdering ? (
-                  <>Processing Pulse...</>
+                  <>Preparing preview…</>
                 ) : (
-                  <>Launch Order <ArrowRight size={18} /></>
+                  <>Preview delivery <ArrowRight size={18} /></>
                 )}
               </button>
               
@@ -391,8 +372,8 @@ export default function MainMealDetail() {
           {/* Right Column */}
           <div className="view-section">
             {/* Meal Display (Reusing coffee-display class for styling) */}
-            <div className="coffee-display" style={{ background: "from-green-900 to-green-700" }}>
-              <MealIcon className="coffee-icon-large" />
+            <div className="coffee-display" >
+              {React.createElement(getMealIcon(selectedMeal.type), { className: 'coffee-icon-large' })}
               <div className="floating-info top-right">
                 <div className="floating-label">Weight</div>
                 <div className="floating-value">{selectedMeal.weight}</div>
@@ -411,7 +392,7 @@ export default function MainMealDetail() {
                   <button
                     key={item.id}
                     onClick={() => toggleTopping(item.id)}
-                    className={`ingredient-card ${selectedToppings.includes(item.id) ? 'active' : ''}`}
+                    aria-pressed={selectedToppings.includes(item.id)} className={`ingredient-card ${selectedToppings.includes(item.id) ? 'active' : ''}`}
                   >
                     <div className="ingredient-info">
                       <span className="ingredient-name">{item.name}</span>
@@ -443,7 +424,7 @@ export default function MainMealDetail() {
                   className={`coffee-card ${selectedMeal.id === meal.id ? 'active' : ''}`}
                   onClick={() => handleMealClick(meal.id)}
                 >
-                  <div className="coffee-card-icon" style={{ background: "from-green-900 to-green-700" }}>
+                  <div className="coffee-card-icon" >
                     <ScrollIcon style={{ width: '24px', height: '24px' }} />
                   </div>
                   <div className="coffee-card-name">{meal.name}</div>

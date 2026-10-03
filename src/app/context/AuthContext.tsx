@@ -1,5 +1,6 @@
 "use client";
 
+import { errorMessage } from '@/lib/errors';
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { authService, otpService } from "@/lib/services";
 import type { MeResponse } from "@/lib/services";
@@ -50,6 +51,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const logout = useCallback(() => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setUser(null);
+  }, []);
+
   const refreshAccessToken = useCallback(async (): Promise<string | null> => {
     const refresh = localStorage.getItem("refresh");
     if (!refresh) return null;
@@ -62,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logout();
       return null;
     }
-  }, []);
+  }, [logout]);
 
   /* ── login ───────────────────────────────────────────────── */
 
@@ -96,8 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const res = await authService.register(data);
         return { success: true, email: res.email };
-      } catch (err: any) {
-        return { success: false, error: err.detail || "Registration failed." };
+      } catch (err: unknown) {
+        return { success: false, error: errorMessage(err, "Registration failed.") };
       }
     },
     [],
@@ -134,11 +141,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /* ── logout ──────────────────────────────────────────────── */
 
-  const logout = useCallback(() => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    setUser(null);
-  }, []);
 
   /* ── OTP password reset ──────────────────────────────────── */
 
